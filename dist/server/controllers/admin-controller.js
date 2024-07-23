@@ -14,13 +14,14 @@ const actions_1 = require("../../admin/actions");
 exports.default = ({ strapi }) => ({
     createVideoId(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Create video id controller');
             try {
                 if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainCreateAction)) {
                     return ctx.forbidden();
                 }
                 return yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("api-video-asset")
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
                     .createVideoId(ctx.request.body);
             }
             catch (err) {
@@ -30,13 +31,14 @@ exports.default = ({ strapi }) => ({
     },
     create(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Create video controller');
             try {
                 if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainCreateAction)) {
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("api-video-asset")
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
                     .create(ctx.request.body);
             }
             catch (err) {
@@ -50,9 +52,10 @@ exports.default = ({ strapi }) => ({
                 if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainReadAction)) {
                     return ctx.forbidden();
                 }
+                console.log('This is just a debug message.Please ignore this.');
                 ctx.body = yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("api-video-asset")
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
                     .findAll(ctx.request.body);
             }
             catch (err) {
@@ -67,8 +70,8 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("api-video-asset")
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
                     .token(ctx.params.videoId);
             }
             catch (err) {
@@ -83,8 +86,8 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("api-video-asset")
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
                     .update(ctx.params.id, ctx.params.videoId, ctx.request.body);
             }
             catch (err) {
@@ -99,8 +102,8 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 return yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("api-video-asset")
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
                     .delete(ctx.params.id, ctx.params.videoId);
             }
             catch (err) {

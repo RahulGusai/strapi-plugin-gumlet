@@ -1,35 +1,35 @@
-import ApiVideoReactPlayer from '@api.video/react-player'
-import React, { FC } from 'react'
-import styled from 'styled-components'
-import { EnhancedCustomVideo } from '../../../pages/HomePage'
+import React, { FC } from 'react';
+import styled from 'styled-components';
+import { EnhancedCustomVideo } from '../../../pages/HomePage';
+import ReactPlayer from 'react-player';
 
 interface IPlayerViewProps {
-    video: EnhancedCustomVideo
+  video: EnhancedCustomVideo;
 }
- 
+
 const PlayerView: FC<IPlayerViewProps> = ({ video }) => {
-    const { videoId, token, privateSession } = video
+  const { mp4 } = video;
+  console.log(mp4);
+  return (
+    <Wrapper>
+      <ReactPlayer
+        url={mp4}
+        controls={true}
+        width="auto"
+        height="300px"
+        style={{
+          borderRadius: 4,
+          overflow: 'hidden',
+          marginBottom: '20px',
+        }}
+      ></ReactPlayer>
+    </Wrapper>
+  );
+};
 
-    return (
-        <Wrapper>
-            <ApiVideoReactPlayer
-                video={video._public ? { id: videoId } : { id: videoId, token, privateSession}}
-                videoStyleObjectFit={'cover'}
-
-                style={{
-                    width: 'auto',
-                    height: 300,
-                    borderRadius: 4,
-                    overflow: 'hidden',
-                }}
-            ></ApiVideoReactPlayer>
-        </Wrapper>
-    )
-}
-
-export default PlayerView
+export default PlayerView;
 
 const Wrapper = styled.div`
-    border-radius: 4px;
-    padding-bottom: 10px;
-`
+  width: 100%;
+  height: auto;
+`;

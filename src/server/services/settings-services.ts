@@ -1,21 +1,21 @@
-import { Strapi } from "@strapi/strapi";
-import { CustomSettings } from "../../types";
-import { isValidApiKey } from "../utils/config";
+import { Strapi } from '@strapi/strapi';
+import { CustomSettings } from '../../types';
+import { isGumletApiKeyValid, isValidApiKey } from '../utils/config';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getSettings() {
     const pluginStore = strapi.store({
       environment: strapi.config.environment,
-      type: "plugin",
-      name: "strapi-uploader-plugin",
+      type: 'plugin',
+      name: 'strapi-uploader-plugin',
     });
 
     const defaultPublic = await pluginStore.get({
-      key: "defaultPublic",
+      key: 'defaultPublic',
     });
 
     const configKey = await pluginStore.get({
-      key: "apiKey",
+      key: 'apiKey',
     });
 
     const res: CustomSettings = {
@@ -27,20 +27,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async saveSettings(settings: CustomSettings) {
     const pluginStore = strapi.store({
       environment: strapi.config.environment,
-      type: "plugin",
-      name: "strapi-uploader-plugin",
+      type: 'plugin',
+      name: 'strapi-uploader-plugin',
     });
 
     try {
-      const isValid = await isValidApiKey(settings.apiKey);
+      const isValid = await isGumletApiKeyValid(
+        settings.apiKey,
+        '669d74091c2a88fdb5b2759f'
+      );
+      console.log(isValid);
       if (isValid) {
         await pluginStore.set({
-          key: "apiKey",
+          key: 'apiKey',
           value: settings.apiKey,
         });
 
         await pluginStore.set({
-          key: "defaultPublic",
+          key: 'defaultPublic',
           value: settings.defaultPublic,
         });
         return true;

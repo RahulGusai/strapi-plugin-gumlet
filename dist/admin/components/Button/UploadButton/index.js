@@ -36,11 +36,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
-const video_uploader_1 = require("@api.video/video-uploader");
 const assets_1 = __importDefault(require("../../../api/assets"));
 const Button_1 = require("@strapi/design-system/Button");
 const helper_plugin_1 = require("@strapi/helper-plugin");
 const CloudUpload_1 = __importDefault(require("@strapi/icons/CloudUpload"));
+const axios_1 = __importDefault(require("axios"));
 const UploadButton = ({ currentFile, title, description, _public, tags, metadata, update, close, }) => {
     const [progress, setProgress] = (0, react_1.useState)(0);
     const [isUploading, setIsUploading] = (0, react_1.useState)(false);
@@ -49,7 +49,6 @@ const UploadButton = ({ currentFile, title, description, _public, tags, metadata
         title.trim().length < 1 ||
         description.trim().length < 1;
     const fileInputChange = () => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
         const body = {
             title: title,
             description: description,
@@ -57,40 +56,41 @@ const UploadButton = ({ currentFile, title, description, _public, tags, metadata
             tags: tags,
             metadata: metadata,
         };
-        const { newVideo, token } = yield assets_1.default.createVideoId(body);
         if (currentFile) {
+            const { uploadUrl, assetId, thumbnail, playbackUrl } = yield assets_1.default.createVideoId(body);
             setIsUploading(true);
-            const uploader = new video_uploader_1.VideoUploader({
-                file: currentFile,
-                accessToken: token.accessToken,
-                refreshToken: token.refreshToken,
-                videoId: newVideo.videoId,
-            });
             try {
-                uploader.onProgress((e) => setProgress(Math.round((e.uploadedBytes * 100) / e.totalBytes)));
-                const res = yield uploader.upload();
+                console.log(`Uploading the video to the gumlet's URL`);
+                yield axios_1.default.put(uploadUrl, currentFile, {
+                    headers: {
+                        'Content-Type': currentFile.type,
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        const { loaded, total } = progressEvent;
+                        setProgress(Math.round((loaded * 100) / total));
+                    },
+                });
+                console.log('Video successfully uploaded on the Gumlet.');
                 const body = {
-                    title: res.title,
-                    description: res.description,
-                    _public: res._public,
-                    videoId: res.videoId,
-                    hls: res.assets.hls,
-                    iframe: res.assets.iframe,
-                    mp4: (_a = res === null || res === void 0 ? void 0 : res.assets) === null || _a === void 0 ? void 0 : _a.mp4,
-                    player: res.assets.player,
-                    thumbnail: (_b = res === null || res === void 0 ? void 0 : res.assets) === null || _b === void 0 ? void 0 : _b.thumbnail,
-                    tags: res.tags,
-                    metadata: res.metadata,
+                    title: title,
+                    description: description,
+                    _public: true,
+                    videoId: assetId,
+                    hls: '',
+                    iframe: '',
+                    mp4: playbackUrl,
+                    player: '',
+                    thumbnail: thumbnail,
                 };
-                const data = yield assets_1.default.create(body);
-                if (data) {
+                const assetData = yield assets_1.default.create(body);
+                if (assetData) {
                     setIsUploading(false);
                     update();
                 }
                 else {
                     notification({
-                        type: "warning",
-                        message: "Error while creating video",
+                        type: 'warning',
+                        message: 'Error while creating video',
                     });
                 }
             }

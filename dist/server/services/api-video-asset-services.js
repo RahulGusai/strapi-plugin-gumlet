@@ -20,20 +20,33 @@ const model = `plugin::${pluginId_1.default}.api-video-asset`;
 exports.default = strapi_1.factories.createCoreService(model, (params) => ({
     createVideoId(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const client = yield (0, config_1.configClient)();
-            const newVideo = yield client.videos.create({
-                title: data["title"],
-                description: data["description"],
-                _public: data["_public"],
-                tags: data["tags"],
-                metadata: data["metadata"],
-            });
-            const token = yield client.getAccessToken();
-            return { newVideo, token };
+            console.log('Create direct upload URL endpoint on gumlet');
+            const client = yield (0, config_1.configGumletClient)();
+            try {
+                // Create a direct upload URL from Gumlet
+                const gumletResponse = yield client.post('/video/assets/upload', {
+                    collection_id: '669d74091c2a88fdb5b2759f',
+                    format: 'MP4',
+                    title: data['title'],
+                    description: data['description'],
+                    tag: data['tags'],
+                });
+                const uploadUrl = gumletResponse.data.upload_url;
+                const assetId = gumletResponse.data.asset_id;
+                const thumbnail = gumletResponse.data.output.thumbnail_url[0];
+                const playbackUrl = gumletResponse.data.output.playback_url;
+                console.log('Successfully created gumlet direct upload URL.');
+                return { uploadUrl, assetId, thumbnail, playbackUrl };
+            }
+            catch (error) {
+                console.error('Error creating direct upload URL:', error);
+                throw error;
+            }
         });
     },
     findAll(query) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Find all endpoint');
             return yield strapi.entityService.findMany(model, query);
         });
     },
@@ -43,20 +56,23 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
             const client = yield (0, config_1.configClient)();
             const video = yield client.videos.get(videoId);
             return {
-                token: (video === null || video === void 0 ? void 0 : video._public) ? undefined : (_b = (_a = video.assets) === null || _a === void 0 ? void 0 : _a.player) === null || _b === void 0 ? void 0 : _b.split("=")[1],
+                token: (video === null || video === void 0 ? void 0 : video._public) ? undefined : (_b = (_a = video.assets) === null || _a === void 0 ? void 0 : _a.player) === null || _b === void 0 ? void 0 : _b.split('=')[1],
             };
         });
     },
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Create video endpoint');
             try {
                 if (!data._public) {
-                    data = yield (0, private_videos_1.replacePrivateVideoTokens)(data, "11111111-1111-1111-1111-111111111111");
+                    data = yield (0, private_videos_1.replacePrivateVideoTokens)(data, '11111111-1111-1111-1111-111111111111');
                 }
                 yield strapi.entityService.create(model, { data });
                 return true;
             }
             catch (error) {
+                console.log('Error occured while creating asset');
+                console.log(error);
                 return false;
             }
         });
@@ -94,7 +110,7 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
                     metadata: updatedVideo.metadata,
                 };
                 if (!customVideo._public) {
-                    customVideo = yield (0, private_videos_1.replacePrivateVideoTokens)(customVideo, "11111111-1111-1111-1111-111111111111");
+                    customVideo = yield (0, private_videos_1.replacePrivateVideoTokens)(customVideo, '11111111-1111-1111-1111-111111111111');
                 }
                 const res = yield strapi.entityService.update(model, id, {
                     data: customVideo,

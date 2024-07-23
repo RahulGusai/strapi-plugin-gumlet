@@ -35,20 +35,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.configClient = exports.isValidApiKey = exports.getConfig = void 0;
+exports.configGumletClient = exports.isGumletApiKeyValid = exports.configClient = exports.isValidApiKey = exports.getConfig = void 0;
 const nodejs_client_1 = __importDefault(require("@api.video/nodejs-client"));
 const packageJson = __importStar(require("../../../package.json"));
+const axios_1 = __importDefault(require("axios"));
 const getConfig = () => __awaiter(void 0, void 0, void 0, function* () {
     const pluginStore = strapi.store({
         environment: strapi.config.environment,
-        type: "plugin",
-        name: "strapi-uploader-plugin",
+        type: 'plugin',
+        name: 'strapi-uploader-plugin',
     });
     const defaultPublic = yield pluginStore.get({
-        key: "defaultPublic",
+        key: 'defaultPublic',
     });
     const configKey = yield pluginStore.get({
-        key: "apiKey",
+        key: 'apiKey',
     });
     const res = {
         apiKey: configKey,
@@ -68,11 +69,39 @@ const isValidApiKey = (apiKey) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.isValidApiKey = isValidApiKey;
+const isGumletApiKeyValid = (apiKey, collectionId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log('checking gumlet API key');
+        const response = yield axios_1.default.get(`https://api.gumlet.com/v1/video/assets/list/${collectionId}`, {
+            headers: {
+                Authorization: `Bearer ${apiKey}`,
+            },
+        });
+        console.log(response);
+        return response.status === 200;
+    }
+    catch (error) {
+        return false;
+    }
+});
+exports.isGumletApiKeyValid = isGumletApiKeyValid;
 const configClient = (apiKey) => __awaiter(void 0, void 0, void 0, function* () {
     return new nodejs_client_1.default({
         apiKey: apiKey ? apiKey : (yield getConfig()).apiKey,
-        sdkName: "strapi-plugin",
+        sdkName: 'strapi-plugin',
         sdkVersion: packageJson.version,
     });
 });
 exports.configClient = configClient;
+const configGumletClient = () => __awaiter(void 0, void 0, void 0, function* () {
+    const config = yield getConfig();
+    const apiKey = config.apiKey;
+    const client = axios_1.default.create({
+        baseURL: 'https://api.gumlet.com/v1',
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+        },
+    });
+    return client;
+});
+exports.configGumletClient = configGumletClient;

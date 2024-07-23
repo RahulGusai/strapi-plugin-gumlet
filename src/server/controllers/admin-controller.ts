@@ -1,36 +1,39 @@
-import { Strapi } from "@strapi/strapi";
-import { isAllowedTo } from ".";
+import { Strapi } from '@strapi/strapi';
+import { isAllowedTo } from '.';
 import {
   mainCreateAction,
   mainDeleteAction,
   mainReadAction,
   mainUpdateAction,
-} from "../../admin/actions";
+} from '../../admin/actions';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async createVideoId(ctx: any) {
+    console.log('Create video id controller');
     try {
       if (!isAllowedTo(strapi, ctx, mainCreateAction)) {
         return ctx.forbidden();
       }
 
       return await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("api-video-asset")
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
         .createVideoId(ctx.request.body);
     } catch (err) {
       ctx.throw(500, err);
     }
   },
   async create(ctx: any) {
+    console.log('Create video controller');
+
     try {
       if (!isAllowedTo(strapi, ctx, mainCreateAction)) {
         return ctx.forbidden();
       }
 
       ctx.body = await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("api-video-asset")
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
         .create(ctx.request.body);
     } catch (err) {
       ctx.throw(500, err);
@@ -42,9 +45,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.forbidden();
       }
 
+      console.log('This is just a debug message.Please ignore this.');
+
       ctx.body = await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("api-video-asset")
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
         .findAll(ctx.request.body);
     } catch (err) {
       ctx.throw(500, err);
@@ -57,8 +62,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       ctx.body = await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("api-video-asset")
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
         .token(ctx.params.videoId);
     } catch (err) {
       ctx.throw(500, err);
@@ -71,8 +76,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       ctx.body = await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("api-video-asset")
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
         .update(ctx.params.id, ctx.params.videoId, ctx.request.body);
     } catch (err) {
       ctx.throw(500, err);
@@ -85,8 +90,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       return await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("api-video-asset")
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
         .delete(ctx.params.id, ctx.params.videoId);
     } catch (err) {
       ctx.throw(500, err);

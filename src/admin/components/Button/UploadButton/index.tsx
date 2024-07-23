@@ -1,10 +1,12 @@
-import React, { useState, FC } from "react";
-import { VideoUploader } from "@api.video/video-uploader";
-import assetsRequests from "../../../api/assets";
-import { Button } from "@strapi/design-system/Button";
-import { useNotification } from "@strapi/helper-plugin";
+import React, { useState, FC } from 'react';
+import { VideoUploader } from '@api.video/video-uploader';
+import assetsRequests from '../../../api/assets';
+import { Button } from '@strapi/design-system/Button';
+import { useNotification } from '@strapi/helper-plugin';
 
-import CloudUpload from "@strapi/icons/CloudUpload";
+import CloudUpload from '@strapi/icons/CloudUpload';
+import axios from 'axios';
+import { Thumbnail } from '../../Videos/styles';
 
 export interface IUploadButtonProps {
   currentFile: File | undefined;
@@ -44,43 +46,46 @@ const UploadButton: FC<IUploadButtonProps> = ({
       tags: tags,
       metadata: metadata,
     };
-    const { newVideo, token } = await assetsRequests.createVideoId(body);
     if (currentFile) {
-      setIsUploading(true);
-      const uploader = new VideoUploader({
-        file: currentFile,
-        accessToken: token.accessToken,
-        refreshToken: token.refreshToken,
-        videoId: newVideo.videoId,
-      });
-      try {
-        uploader.onProgress((e) =>
-          setProgress(Math.round((e.uploadedBytes * 100) / e.totalBytes))
-        );
+      const { uploadUrl, assetId, thumbnail, playbackUrl } =
+        await assetsRequests.createVideoId(body);
 
-        const res: any = await uploader.upload();
+      setIsUploading(true);
+      try {
+        console.log(`Uploading the video to the gumlet's URL`);
+
+        await axios.put(uploadUrl, currentFile, {
+          headers: {
+            'Content-Type': currentFile.type,
+          },
+          onUploadProgress: (progressEvent) => {
+            const { loaded, total } = progressEvent;
+            setProgress(Math.round((loaded * 100) / total));
+          },
+        });
+
+        console.log('Video successfully uploaded on the Gumlet.');
 
         const body = {
-          title: res.title,
-          description: res.description,
-          _public: res._public,
-          videoId: res.videoId,
-          hls: res.assets.hls,
-          iframe: res.assets.iframe,
-          mp4: res?.assets?.mp4,
-          player: res.assets.player,
-          thumbnail: res?.assets?.thumbnail,
-          tags: res.tags,
-          metadata: res.metadata,
+          title: title,
+          description: description,
+          _public: true,
+          videoId: assetId,
+          hls: '',
+          iframe: '',
+          mp4: playbackUrl,
+          player: '',
+          thumbnail: thumbnail,
         };
-        const data = await assetsRequests.create(body);
-        if (data) {
+        const assetData = await assetsRequests.create(body);
+
+        if (assetData) {
           setIsUploading(false);
           update();
         } else {
           notification({
-            type: "warning",
-            message: "Error while creating video",
+            type: 'warning',
+            message: 'Error while creating video',
           });
         }
       } catch (e) {
