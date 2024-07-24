@@ -35,24 +35,19 @@ const Fields_1 = __importDefault(require("../../FieldComp/Fields"));
 const LinksTable_1 = __importDefault(require("../../LinksTable"));
 const Metadata_1 = __importDefault(require("../../Metadata"));
 const Tags_1 = __importDefault(require("../../Tags"));
-const Toggle_1 = __importDefault(require("../../Toggle"));
 const PlayerView_1 = __importDefault(require("./PlayerView"));
 const UpdateVideoModal = ({ video, update, close, editable, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: video.title,
         description: video.description,
-        _public: video._public,
         tags: video.tags,
         metadata: video.metadata,
     });
     // CONSTANTS
-    const { title, description, _public, tags, metadata } = inputData;
+    const { title, description, tags, metadata } = inputData;
     const handleChange = (event) => {
         const { name, value } = event.target;
         setInputData((prevInputData) => (Object.assign(Object.assign({}, prevInputData), { [name]: value })));
-    };
-    const handleSetPublic = (event) => {
-        setInputData(Object.assign(Object.assign({}, inputData), { _public: event.target.checked }));
     };
     const handleSetTag = (tag) => {
         if (tag) {
@@ -81,12 +76,11 @@ const UpdateVideoModal = ({ video, update, close, editable, }) => {
             react_1.default.createElement("br", null),
             react_1.default.createElement(Fields_1.default, { name: "description", label: "Description", value: description || '', placeholder: "Enter a description", onChange: handleChange, editable: editable }),
             react_1.default.createElement("br", null),
-            react_1.default.createElement(Toggle_1.default, { label: "Public", required: true, checked: inputData._public, onLabel: "True", offLabel: "False", onChange: handleSetPublic }),
             react_1.default.createElement("br", null),
             react_1.default.createElement(Tags_1.default, { handleSetTag: handleSetTag, handleRemoveTag: handleRemoveTag, tags: tags || [], editable: editable }),
             react_1.default.createElement(Metadata_1.default, { metadata: metadata, handleSetMetadata: handleSetMetadata, handleRemoveMetadata: handleRemoveMetadata, editable: editable }),
             react_1.default.createElement(LinksTable_1.default, { video: video })),
         react_1.default.createElement(ModalLayout_1.ModalFooter, { startActions: react_1.default.createElement(Button_1.Button, { onClick: close, variant: "tertiary" }, "Cancel"), endActions: editable && (react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(UpdateButton_1.default, { title: title, description: description || '', _public: _public, tags: tags || [], metadata: metadata || [], id: video.id, videoId: video.videoId, update: update, close: close }))) })));
+                react_1.default.createElement(UpdateButton_1.default, { title: title, description: description || '', tags: tags || [], metadata: metadata || [], id: video.id, videoId: video.videoId, update: update, close: close }))) })));
 };
 exports.default = UpdateVideoModal;

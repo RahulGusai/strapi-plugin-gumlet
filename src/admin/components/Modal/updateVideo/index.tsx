@@ -7,8 +7,7 @@ import {
 } from '@strapi/design-system/ModalLayout';
 import { Typography } from '@strapi/design-system/Typography';
 import React, { ChangeEvent, FC, useState } from 'react';
-import { InputData } from '../../../../types';
-import { EnhancedCustomVideo } from '../../../pages/HomePage';
+import { CustomVideo, InputData } from '../../../../types';
 import UpdateButton from '../../Button/UpdateButton';
 import FieldComp from '../../FieldComp/Fields';
 import LinksTable from '../../LinksTable';
@@ -18,7 +17,7 @@ import Toggle from '../../Toggle';
 import PlayerView from './PlayerView';
 
 interface IUpdateVideoModalProps {
-  video: EnhancedCustomVideo;
+  video: CustomVideo;
   update: () => void;
   close: () => void;
   editable: boolean;
@@ -33,21 +32,16 @@ const UpdateVideoModal: FC<IUpdateVideoModalProps> = ({
   const [inputData, setInputData] = useState<InputData>({
     title: video.title,
     description: video.description,
-    _public: video._public,
     tags: video.tags,
     metadata: video.metadata,
   });
 
   // CONSTANTS
-  const { title, description, _public, tags, metadata } = inputData;
+  const { title, description, tags, metadata } = inputData;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setInputData((prevInputData) => ({ ...prevInputData, [name]: value }));
-  };
-
-  const handleSetPublic = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputData({ ...inputData, _public: event.target.checked });
   };
 
   const handleSetTag = (tag: string) => {
@@ -105,14 +99,6 @@ const UpdateVideoModal: FC<IUpdateVideoModalProps> = ({
         />
         <br />
 
-        <Toggle
-          label="Public"
-          required={true}
-          checked={inputData._public}
-          onLabel="True"
-          offLabel="False"
-          onChange={handleSetPublic}
-        />
         <br />
 
         <Tags
@@ -143,7 +129,6 @@ const UpdateVideoModal: FC<IUpdateVideoModalProps> = ({
               <UpdateButton
                 title={title}
                 description={description || ''}
-                _public={_public}
                 tags={tags || []}
                 metadata={metadata || []}
                 id={video.id}

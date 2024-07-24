@@ -20,11 +20,6 @@ const assetsRequests = {
             method: 'GET',
         });
     }),
-    getToken: (videoId) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield (0, helper_plugin_1.request)(`/${pluginId_1.default}/api-video-asset/token/${videoId}`, {
-            method: 'GET',
-        });
-    }),
     createVideoId: (body) => __awaiter(void 0, void 0, void 0, function* () {
         return yield (0, helper_plugin_1.request)(`/${pluginId_1.default}/api-video-asset/create`, {
             method: 'POST',

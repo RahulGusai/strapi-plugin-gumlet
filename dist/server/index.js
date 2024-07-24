@@ -7,7 +7,6 @@ const bootstrap_1 = __importDefault(require("./bootstrap"));
 const config_1 = __importDefault(require("./config"));
 const content_types_1 = __importDefault(require("./content-types"));
 const controllers_1 = __importDefault(require("./controllers"));
-const register_1 = __importDefault(require("./register"));
 const routes_1 = __importDefault(require("./routes"));
 const services_1 = __importDefault(require("./services"));
 exports.default = {
@@ -17,5 +16,4 @@ exports.default = {
     routes: routes_1.default,
     services: services_1.default,
     contentTypes: content_types_1.default,
-    register: register_1.default,
 };

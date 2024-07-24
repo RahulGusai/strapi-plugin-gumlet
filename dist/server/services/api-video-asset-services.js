@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const strapi_1 = require("@strapi/strapi");
 const pluginId_1 = __importDefault(require("../../admin/pluginId"));
 const config_1 = require("../utils/config");
-const private_videos_1 = require("../utils/private-videos");
+const gumlet_1 = require("../constants/gumlet");
 const model = `plugin::${pluginId_1.default}.api-video-asset`;
 exports.default = strapi_1.factories.createCoreService(model, (params) => ({
     createVideoId(data) {
@@ -23,18 +23,17 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
             console.log('Create direct upload URL endpoint on gumlet');
             const client = yield (0, config_1.configGumletClient)();
             try {
-                // Create a direct upload URL from Gumlet
                 const gumletResponse = yield client.post('/video/assets/upload', {
-                    collection_id: '669d74091c2a88fdb5b2759f',
-                    format: 'MP4',
+                    collection_id: gumlet_1.GUMLET_COLLECTION_ID,
+                    format: gumlet_1.GUMLET_VIDEO_FORMAT,
                     title: data['title'],
                     description: data['description'],
                     tag: data['tags'],
                 });
                 const uploadUrl = gumletResponse.data.upload_url;
                 const assetId = gumletResponse.data.asset_id;
-                const thumbnail = gumletResponse.data.output.thumbnail_url[0];
                 const playbackUrl = gumletResponse.data.output.playback_url;
+                const thumbnail = gumletResponse.data.output.thumbnail_url[0];
                 console.log('Successfully created gumlet direct upload URL.');
                 return { uploadUrl, assetId, thumbnail, playbackUrl };
             }
@@ -50,23 +49,10 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
             return yield strapi.entityService.findMany(model, query);
         });
     },
-    token(videoId) {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            const client = yield (0, config_1.configClient)();
-            const video = yield client.videos.get(videoId);
-            return {
-                token: (video === null || video === void 0 ? void 0 : video._public) ? undefined : (_b = (_a = video.assets) === null || _a === void 0 ? void 0 : _a.player) === null || _b === void 0 ? void 0 : _b.split('=')[1],
-            };
-        });
-    },
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('Create video endpoint');
             try {
-                if (!data._public) {
-                    data = yield (0, private_videos_1.replacePrivateVideoTokens)(data, '11111111-1111-1111-1111-111111111111');
-                }
                 yield strapi.entityService.create(model, { data });
                 return true;
             }

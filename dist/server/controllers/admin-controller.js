@@ -52,27 +52,10 @@ exports.default = ({ strapi }) => ({
                 if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainReadAction)) {
                     return ctx.forbidden();
                 }
-                console.log('This is just a debug message.Please ignore this.');
                 ctx.body = yield strapi
                     .plugin('strapi-uploader-plugin')
                     .service('api-video-asset')
                     .findAll(ctx.request.body);
-            }
-            catch (err) {
-                ctx.throw(500, err);
-            }
-        });
-    },
-    token(ctx) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainReadAction)) {
-                    return ctx.forbidden();
-                }
-                ctx.body = yield strapi
-                    .plugin('strapi-uploader-plugin')
-                    .service('api-video-asset')
-                    .token(ctx.params.videoId);
             }
             catch (err) {
                 ctx.throw(500, err);

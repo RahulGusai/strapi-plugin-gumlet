@@ -1,4 +1,3 @@
-import ApiVideoClient from '@api.video/nodejs-client';
 import * as packageJson from '../../../package.json';
 import { CustomSettings } from '../../types';
 import axios from 'axios';
@@ -25,17 +24,6 @@ const getConfig = async () => {
   return res;
 };
 
-const isValidApiKey = async (apiKey: string) => {
-  const client = await configClient(apiKey);
-
-  try {
-    const { accessToken } = await client.getAccessToken();
-    return accessToken ? true : false;
-  } catch (error) {
-    return false;
-  }
-};
-
 const isGumletApiKeyValid = async (apiKey: string, collectionId: string) => {
   try {
     console.log('checking gumlet API key');
@@ -54,13 +42,6 @@ const isGumletApiKeyValid = async (apiKey: string, collectionId: string) => {
   }
 };
 
-const configClient = async (apiKey?: string) =>
-  new ApiVideoClient({
-    apiKey: apiKey ? apiKey : (await getConfig()).apiKey,
-    sdkName: 'strapi-plugin',
-    sdkVersion: packageJson.version,
-  });
-
 const configGumletClient = async () => {
   const config = await getConfig();
   const apiKey = config.apiKey;
@@ -75,10 +56,4 @@ const configGumletClient = async () => {
   return client;
 };
 
-export {
-  getConfig,
-  isValidApiKey,
-  configClient,
-  isGumletApiKeyValid,
-  configGumletClient,
-};
+export { getConfig, isGumletApiKeyValid, configGumletClient };

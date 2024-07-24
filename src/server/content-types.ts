@@ -30,29 +30,12 @@ export = {
           type: 'string',
           required: true,
         },
-        _public: {
-          type: 'boolean',
-          default: true,
-          required: true,
-        },
         videoId: {
           type: 'string',
           required: true,
           maxLength: 255,
         },
-        hls: {
-          type: 'string',
-          required: true,
-        },
-        iframe: {
-          type: 'string',
-          required: true,
-        },
-        mp4: {
-          type: 'string',
-          required: true,
-        },
-        player: {
+        playbackUrl: {
           type: 'string',
           required: true,
         },

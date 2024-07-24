@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -43,14 +34,11 @@ const Fields_1 = __importDefault(require("../../FieldComp/Fields"));
 const UploadButton_1 = __importDefault(require("../../Button/UploadButton"));
 const importZone_1 = __importDefault(require("./importZone"));
 const Tags_1 = __importDefault(require("../../Tags"));
-const Toggle_1 = __importDefault(require("../../Toggle"));
-const settings_1 = __importDefault(require("../../../api/settings"));
 const Metadata_1 = __importDefault(require("../../Metadata"));
-const AddVideoModal = ({ update, close }) => {
+const AddVideoModal = ({ update, close, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: '',
         description: '',
-        _public: true,
         tags: [],
         metadata: [
             {
@@ -64,23 +52,16 @@ const AddVideoModal = ({ update, close }) => {
     // CONSTANTS
     const videoRef = (0, react_1.useRef)(null);
     const sourceRef = (0, react_1.useRef)(null);
-    const { title, description, _public, tags, metadata } = inputData;
+    const { title, description, tags, metadata } = inputData;
     const displayVideoFrame = (video, source, file) => {
         // Object Url as the video source
         source.setAttribute('src', URL.createObjectURL(file));
         // Load the video and show it
         video.load();
     };
-    const getSettings = () => __awaiter(void 0, void 0, void 0, function* () {
-        const settings = yield settings_1.default.get();
-        setInputData(Object.assign(Object.assign({}, inputData), { _public: settings.defaultPublic }));
-    });
     const handleChange = (event) => {
         const { name, value } = event.target;
         setInputData((prevInputData) => (Object.assign(Object.assign({}, prevInputData), { [name]: value })));
-    };
-    const handleSetPublic = (event) => {
-        setInputData(Object.assign(Object.assign({}, inputData), { _public: event.target.checked }));
     };
     const handleSetTag = (tag) => {
         if (tag) {
@@ -110,9 +91,6 @@ const AddVideoModal = ({ update, close }) => {
         if (videoRef.current && sourceRef.current)
             displayVideoFrame(videoRef.current, sourceRef.current, file);
     };
-    (0, react_1.useEffect)(() => {
-        getSettings();
-    }, []);
     return (react_1.default.createElement(ModalLayout_1.ModalLayout, { onClose: close, labelledBy: "title" },
         react_1.default.createElement(ModalLayout_1.ModalHeader, null,
             react_1.default.createElement(Typography_1.Typography, { fontWeight: "bold", textColor: "neutral800", as: "h2", id: "title" }, "Upload a video")),
@@ -122,11 +100,9 @@ const AddVideoModal = ({ update, close }) => {
             react_1.default.createElement("br", null),
             react_1.default.createElement(Fields_1.default, { name: "description", label: "Description", value: description || '', placeholder: "Enter a description", onChange: handleChange, required: true }),
             react_1.default.createElement("br", null),
-            react_1.default.createElement(Toggle_1.default, { label: "Public", required: true, checked: _public, onLabel: "True", offLabel: "False", onChange: handleSetPublic }),
-            react_1.default.createElement("br", null),
             react_1.default.createElement(Tags_1.default, { handleSetTag: handleSetTag, handleRemoveTag: handleRemoveTag, tags: tags || [], editable: true }),
             react_1.default.createElement(Metadata_1.default, { metadata: metadata, handleSetMetadata: handleSetMetadata, handleRemoveMetadata: handleRemoveMetadata, editable: true })),
         react_1.default.createElement(ModalLayout_1.ModalFooter, { startActions: react_1.default.createElement(Button_1.Button, { onClick: close, variant: "tertiary" }, "Cancel"), endActions: react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(UploadButton_1.default, { currentFile: file, title: title, description: description, _public: _public, tags: tags || [], metadata: metadata || [], update: update, close: close })) })));
+                react_1.default.createElement(UploadButton_1.default, { currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], update: update, close: close })) })));
 };
 exports.default = AddVideoModal;

@@ -43,7 +43,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Layout_1 = require("@strapi/design-system/Layout");
 const helper_plugin_1 = require("@strapi/helper-plugin");
 const react_1 = __importStar(require("react"));
-const private_video_session_1 = require("@api.video/private-video-session");
 const helper_plugin_2 = require("@strapi/helper-plugin");
 const assets_1 = __importDefault(require("../../api/assets"));
 const settings_1 = __importDefault(require("../../api/settings"));
@@ -74,29 +73,16 @@ const HomePage = () => {
         if (isLoadingData === false)
             setIsLoadingData(true);
         const data = yield Promise.all((yield assets_1.default.getAllvideos()).map((video) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a;
-            video._public = (_a = video._public) !== null && _a !== void 0 ? _a : true;
-            if (video._public) {
-                return video;
-            }
-            const token = (yield assets_1.default.getToken(video.videoId)).token;
-            const privateSession = new private_video_session_1.PrivateVideoSession({
-                token,
-                videoId: video.videoId,
-            });
-            return Object.assign(Object.assign({}, video), { 
-                // thumbnail: await privateSession.getThumbnailUrl(),
-                // privateSession: await privateSession.getSessionToken(),
-                token });
+            return video;
         })));
         setIsLoadingData(false);
         setAssets(data);
     });
     const getApiKey = () => __awaiter(void 0, void 0, void 0, function* () {
-        var _b;
+        var _a;
         setIsLoadingConfiguration(true);
         const settings = yield settings_1.default.get();
-        setIsConfigurated(((_b = settings === null || settings === void 0 ? void 0 : settings.apiKey) === null || _b === void 0 ? void 0 : _b.length) > 0);
+        setIsConfigurated(((_a = settings === null || settings === void 0 ? void 0 : settings.apiKey) === null || _a === void 0 ? void 0 : _a.length) > 0);
         setIsLoadingConfiguration(false);
     });
     (0, react_1.useEffect)(() => {

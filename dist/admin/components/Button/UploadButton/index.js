@@ -41,7 +41,7 @@ const Button_1 = require("@strapi/design-system/Button");
 const helper_plugin_1 = require("@strapi/helper-plugin");
 const CloudUpload_1 = __importDefault(require("@strapi/icons/CloudUpload"));
 const axios_1 = __importDefault(require("axios"));
-const UploadButton = ({ currentFile, title, description, _public, tags, metadata, update, close, }) => {
+const UploadButton = ({ currentFile, title, description, tags, metadata, update, close, }) => {
     const [progress, setProgress] = (0, react_1.useState)(0);
     const [isUploading, setIsUploading] = (0, react_1.useState)(false);
     const notification = (0, helper_plugin_1.useNotification)();
@@ -52,7 +52,6 @@ const UploadButton = ({ currentFile, title, description, _public, tags, metadata
         const body = {
             title: title,
             description: description,
-            _public: _public,
             tags: tags,
             metadata: metadata,
         };
@@ -74,12 +73,8 @@ const UploadButton = ({ currentFile, title, description, _public, tags, metadata
                 const body = {
                     title: title,
                     description: description,
-                    _public: true,
                     videoId: assetId,
-                    hls: '',
-                    iframe: '',
-                    mp4: playbackUrl,
-                    player: '',
+                    playbackUrl: playbackUrl,
                     thumbnail: thumbnail,
                 };
                 const assetData = yield assets_1.default.create(body);

@@ -1,19 +1,18 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { EnhancedCustomVideo } from '../../../pages/HomePage';
 import ReactPlayer from 'react-player';
+import { CustomVideo } from '../../../../types';
 
 interface IPlayerViewProps {
-  video: EnhancedCustomVideo;
+  video: CustomVideo;
 }
 
 const PlayerView: FC<IPlayerViewProps> = ({ video }) => {
-  const { mp4 } = video;
-  console.log(mp4);
+  const { playbackUrl } = video;
   return (
     <Wrapper>
       <ReactPlayer
-        url={mp4}
+        url={playbackUrl}
         controls={true}
         width="auto"
         height="300px"

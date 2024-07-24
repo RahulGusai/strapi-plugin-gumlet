@@ -1,6 +1,6 @@
 import { Strapi } from '@strapi/strapi';
 import { CustomSettings } from '../../types';
-import { isGumletApiKeyValid, isValidApiKey } from '../utils/config';
+import { isGumletApiKeyValid } from '../utils/config';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getSettings() {

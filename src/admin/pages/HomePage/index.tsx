@@ -11,7 +11,6 @@ import {
 } from '@strapi/design-system/Layout';
 import { LoadingIndicatorPage } from '@strapi/helper-plugin';
 import React, { useEffect, useMemo, useState } from 'react';
-import { PrivateVideoSession } from '@api.video/private-video-session';
 import { CheckPagePermissions, useRBAC } from '@strapi/helper-plugin';
 import { CustomVideo } from '../../../types';
 import assetsRequests from '../../api/assets';
@@ -23,11 +22,6 @@ import SetupNeeded from '../../components/SetupNeeded';
 import VideoView from '../../components/Videos';
 import { GridBroadcast } from '../../components/Videos/styles';
 import pluginPermissions from '../../permissions';
-
-export type EnhancedCustomVideo = CustomVideo & {
-  token?: string;
-  privateSession?: string;
-};
 
 const HomePage = () => {
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -62,23 +56,8 @@ const HomePage = () => {
     const data = await Promise.all(
       (
         await assetsRequests.getAllvideos()
-      ).map(async (video: CustomVideo): Promise<EnhancedCustomVideo> => {
-        video._public = video._public ?? true;
-        if (video._public) {
-          return video;
-        }
-        const token = (await assetsRequests.getToken(video.videoId)).token;
-        const privateSession = new PrivateVideoSession({
-          token,
-          videoId: video.videoId,
-        });
-
-        return {
-          ...video,
-          // thumbnail: await privateSession.getThumbnailUrl(),
-          // privateSession: await privateSession.getSessionToken(),
-          token,
-        };
+      ).map(async (video: CustomVideo): Promise<CustomVideo> => {
+        return video;
       })
     );
 

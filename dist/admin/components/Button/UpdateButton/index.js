@@ -39,15 +39,13 @@ const react_1 = __importStar(require("react"));
 const Button_1 = require("@strapi/design-system/Button");
 const helper_plugin_1 = require("@strapi/helper-plugin");
 const assets_1 = __importDefault(require("../../../api/assets"));
-const UpdateButton = ({ title, description, _public, tags, metadata, id, videoId, update, close, }) => {
+const UpdateButton = ({ title, description, tags, metadata, id, videoId, update, close, }) => {
     const [isUploading, setIsUploading] = (0, react_1.useState)(false);
     const notification = (0, helper_plugin_1.useNotification)();
     const updateData = () => __awaiter(void 0, void 0, void 0, function* () {
         const body = {
             title: title,
             description: description,
-            //   tag: tags,
-            //   metadata: metadata,
         };
         setIsUploading(true);
         try {
@@ -60,7 +58,7 @@ const UpdateButton = ({ title, description, _public, tags, metadata, id, videoId
             else {
                 notification({
                     type: 'warning',
-                    message: 'Error while creating video',
+                    message: 'Error while updating video',
                 });
             }
         }

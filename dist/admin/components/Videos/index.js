@@ -44,7 +44,7 @@ const Dialog_1 = __importDefault(require("../Dialog"));
 const updateVideo_1 = __importDefault(require("../Modal/updateVideo"));
 const styles_1 = require("./styles");
 const hooks_1 = require("../../utils/hooks");
-const VideoView = ({ video, updateData, deletable, editable }) => {
+const VideoView = ({ video, updateData, deletable, editable, }) => {
     const [isModalOpen, setIsModalOpen] = (0, react_1.useState)(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = (0, react_1.useState)(false);
     const [thumbnail, setThumbnail] = (0, react_1.useState)();
@@ -80,8 +80,8 @@ const VideoView = ({ video, updateData, deletable, editable }) => {
     const formatedCreatedAt = (0, date_1.getDayMonthYearHourDate)(video.createdAt);
     return (react_1.default.createElement(styles_1.Container, null,
         react_1.default.createElement(styles_1.WrapperVideo, { onClick: () => setIsModalOpen(true) },
-            thumbnail ? react_1.default.createElement(styles_1.Thumbnail, { src: thumbnail, alt: 'thumbnail' }) : react_1.default.createElement(VideoCover_1.VideoCover, null),
-            deletable && react_1.default.createElement(styles_1.DeleteIcon, { onClick: openDeleteDialog, "aria-label": "Delete", icon: react_1.default.createElement(Trash_1.default, null) })),
+            thumbnail ? (react_1.default.createElement(styles_1.Thumbnail, { src: thumbnail, alt: 'thumbnail' })) : (react_1.default.createElement(VideoCover_1.VideoCover, null)),
+            deletable && (react_1.default.createElement(styles_1.DeleteIcon, { onClick: openDeleteDialog, "aria-label": "Delete", icon: react_1.default.createElement(Trash_1.default, null) }))),
         react_1.default.createElement(styles_1.TitleWrapper, null,
             react_1.default.createElement(styles_1.Title, { dark: theme === 'dark' }, video.title),
             react_1.default.createElement(styles_1.SubTitle, null, video.description),

@@ -22,20 +22,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Button_1 = require("@strapi/design-system/Button");
 const Flex_1 = require("@strapi/design-system/Flex");
 const IconButton_1 = require("@strapi/design-system/IconButton");
 const Table_1 = require("@strapi/design-system/Table");
@@ -43,37 +33,26 @@ const Typography_1 = require("@strapi/design-system/Typography");
 const VisuallyHidden_1 = require("@strapi/design-system/VisuallyHidden");
 const Link_1 = __importDefault(require("@strapi/icons/Link"));
 const react_1 = __importStar(require("react"));
-const private_videos_1 = require("../../../server/utils/private-videos");
-const assets_1 = __importDefault(require("../../api/assets"));
 const form_1 = require("../../styles/form");
 const utils_1 = require("../../utils");
 const hooks_1 = require("../../utils/hooks");
 const videoToAssets = (video) => {
     const assets = {
-        hls: video.hls,
-        iframe: video.iframe,
-        mp4: video.mp4,
-        player: video.player,
+        playbackUrl: video.playbackUrl,
+        // iframe: video.iframe,
+        // mp4: video.mp4,
+        // player: video.player,
     };
     return assets;
 };
 const LinksTable = ({ video }) => {
-    const [assets, setAssets] = (0, react_1.useState)(!!(video === null || video === void 0 ? void 0 : video.token) ? undefined : videoToAssets(video));
+    const [assets, setAssets] = (0, react_1.useState)(videoToAssets(video));
     const theme = (0, hooks_1.useTheme)();
     const COL_COUNT = 4;
     const ROW_COUNT = 2;
-    const isPrivate = !!(video === null || video === void 0 ? void 0 : video.token);
-    const generateToken = () => __awaiter(void 0, void 0, void 0, function* () {
-        const token = (yield assets_1.default.getToken(video.videoId)).token;
-        setAssets(videoToAssets(yield (0, private_videos_1.replacePrivateVideoTokens)(video, token)));
-    });
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(form_1.Title, { dark: theme === 'dark', style: { marginTop: '20px' } }, "Links"),
-        isPrivate
-            ? react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(form_1.SubTitle, null, "The URLs for assets of private videos can only be used once. To obtain new URLs, you can click on the button below to generate fresh links. Each time you access a private video through the Strapi Content API, a new set of private asset URLs will be generated."),
-                react_1.default.createElement(Button_1.Button, { onClick: () => generateToken() }, "Generate new urls"))
-            : react_1.default.createElement(form_1.SubTitle, null, "A list of links you can copy by clicking on the copy button."),
+        react_1.default.createElement(form_1.SubTitle, null, "A list of links you can copy by clicking on the copy button."),
         assets && (react_1.default.createElement(Table_1.Table, { colCount: COL_COUNT, rowCount: ROW_COUNT },
             react_1.default.createElement(Table_1.Thead, null,
                 react_1.default.createElement(Table_1.Tr, null,

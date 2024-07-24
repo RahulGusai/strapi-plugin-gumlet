@@ -6,7 +6,6 @@ import assetsRequests from '../../../api/assets';
 export interface IUpdateButtonProps {
   title: string;
   description: string;
-  _public: boolean;
   tags: string[];
   metadata: { key: string; value: string }[];
   id: number;
@@ -18,7 +17,6 @@ export interface IUpdateButtonProps {
 const UpdateButton: FC<IUpdateButtonProps> = ({
   title,
   description,
-  _public,
   tags,
   metadata,
   id,
@@ -34,8 +32,6 @@ const UpdateButton: FC<IUpdateButtonProps> = ({
     const body = {
       title: title,
       description: description,
-      //   tag: tags,
-      //   metadata: metadata,
     };
     setIsUploading(true);
 
@@ -48,7 +44,7 @@ const UpdateButton: FC<IUpdateButtonProps> = ({
       } else {
         notification({
           type: 'warning',
-          message: 'Error while creating video',
+          message: 'Error while updating video',
         });
       }
     } catch (e) {
