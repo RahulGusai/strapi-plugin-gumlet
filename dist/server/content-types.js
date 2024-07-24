@@ -8,7 +8,7 @@ module.exports = {
                 name: 'api-video-asset',
                 singularName: 'api-video-asset',
                 pluralName: 'api-video-assets',
-                displayName: 'api.video Asset',
+                displayName: 'Gumlet Asset',
             },
             pluginOptions: {
                 'content-manager': {
@@ -34,7 +34,7 @@ module.exports = {
                 _public: {
                     type: 'boolean',
                     default: true,
-                    required: true
+                    required: true,
                 },
                 videoId: {
                     type: 'string',

@@ -79,9 +79,9 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
     },
     delete(id, videoId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const client = yield (0, config_1.configClient)();
+            const client = yield (0, config_1.configGumletClient)();
             try {
-                yield client.videos.delete(videoId);
+                yield client.delete(`/video/assets/${videoId}`);
                 yield strapi.entityService.delete(model, id);
                 return true;
             }
@@ -91,33 +91,19 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
         });
     },
     update(id, videoId, data) {
-        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
-            const client = yield (0, config_1.configClient)();
             try {
-                const updatedVideo = yield client.videos.update(videoId, data);
-                let customVideo = {
-                    title: updatedVideo.title,
-                    description: updatedVideo.description,
-                    _public: updatedVideo._public,
-                    videoId: updatedVideo.videoId,
-                    hls: (_a = updatedVideo.assets) === null || _a === void 0 ? void 0 : _a.hls,
-                    iframe: (_b = updatedVideo.assets) === null || _b === void 0 ? void 0 : _b.iframe,
-                    mp4: (_c = updatedVideo === null || updatedVideo === void 0 ? void 0 : updatedVideo.assets) === null || _c === void 0 ? void 0 : _c.mp4,
-                    player: (_d = updatedVideo.assets) === null || _d === void 0 ? void 0 : _d.player,
-                    thumbnail: (_e = updatedVideo === null || updatedVideo === void 0 ? void 0 : updatedVideo.assets) === null || _e === void 0 ? void 0 : _e.thumbnail,
-                    tags: updatedVideo.tags,
-                    metadata: updatedVideo.metadata,
-                };
-                if (!customVideo._public) {
-                    customVideo = yield (0, private_videos_1.replacePrivateVideoTokens)(customVideo, '11111111-1111-1111-1111-111111111111');
-                }
+                const client = yield (0, config_1.configGumletClient)();
+                yield client.post('/video/assets/update', Object.assign({ asset_id: videoId }, data));
+                console.log('Updated video on gumlet');
                 const res = yield strapi.entityService.update(model, id, {
-                    data: customVideo,
+                    data: data,
                 });
+                console.log('Update strapi asset');
                 return res;
             }
             catch (error) {
+                console.log(error);
                 return false;
             }
         });

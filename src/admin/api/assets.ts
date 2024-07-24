@@ -25,7 +25,7 @@ const assetsRequests = {
       body,
     });
   },
-  update: async (id: number, videoId: string, body: InputData) => {
+  update: async (id: number, videoId: string, body: any) => {
     return await request(`/${pluginId}/api-video-asset/${id}/${videoId}`, {
       method: 'PUT',
       body,

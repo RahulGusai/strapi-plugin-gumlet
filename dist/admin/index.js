@@ -53,24 +53,24 @@ exports.default = {
                 defaultMessage: displayName,
             },
             permissions: permissions_1.default.mainRead,
-            Component: () => __awaiter(this, void 0, void 0, function* () { return yield Promise.resolve().then(() => __importStar(require("./pages/App"))); }),
+            Component: () => __awaiter(this, void 0, void 0, function* () { return yield Promise.resolve().then(() => __importStar(require('./pages/App'))); }),
         });
         app.createSettingSection({
             id: pluginId_1.default,
             intlLabel: {
-                id: "api.Video Uploader plugin Settings Section",
-                defaultMessage: "api.video Uploader",
+                id: 'Gumlet Video Uploader plugin Settings Section',
+                defaultMessage: 'Gumlet Video Uploader',
             },
         }, [
             {
                 intlLabel: {
-                    id: "Settings Section api.video uploader",
-                    defaultMessage: "Settings",
+                    id: 'Settings Section Gumlet Video Uploader',
+                    defaultMessage: 'Settings',
                 },
-                id: "strapi-uploader-plugin-settings",
+                id: 'strapi-uploader-plugin-settings',
                 to: `/settings/${pluginId_1.default}`,
                 permissions: permissions_1.default.settingsRoles,
-                Component: () => __awaiter(this, void 0, void 0, function* () { return yield Promise.resolve().then(() => __importStar(require("./pages/Settings"))); }),
+                Component: () => __awaiter(this, void 0, void 0, function* () { return yield Promise.resolve().then(() => __importStar(require('./pages/Settings'))); }),
             },
         ]);
         app.registerPlugin({

@@ -111,7 +111,7 @@ const HomePage = () => {
     if (isLoadingConfiguration || isLoadingPermissions)
         return react_1.default.createElement(helper_plugin_1.LoadingIndicatorPage, null);
     return (react_1.default.createElement(Layout_1.Layout, null,
-        react_1.default.createElement(Layout_1.BaseHeaderLayout, { title: "Gumlet video uploader", subtitle: "Upload to and manage your api.video library directly within Strapi", as: "h2", primaryAction: isConfigurated && canCreate && react_1.default.createElement(AddButton_1.default, { update: fetchData }) }),
+        react_1.default.createElement(Layout_1.BaseHeaderLayout, { title: "Gumlet video uploader", subtitle: "Upload to and manage your Gumlet library directly within Strapi", as: "h2", primaryAction: isConfigurated && canCreate && react_1.default.createElement(AddButton_1.default, { update: fetchData }) }),
         isConfigurated ? (!isLoadingData && (assets === null || assets === void 0 ? void 0 : assets.length) > 0 ? (react_1.default.createElement(Layout_1.ContentLayout, null,
             react_1.default.createElement(SearchBar_1.default, { search: search, handleSearch: (query) => handleSearch(query), clearSearch: () => setSearch('') }),
             react_1.default.createElement(styles_1.GridBroadcast, null, assets

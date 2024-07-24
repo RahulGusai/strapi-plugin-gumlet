@@ -74,9 +74,9 @@ export default factories.createCoreService<any, any>(
     },
 
     async delete(id: string, videoId: string): Promise<boolean> {
-      const client = await configClient();
+      const client = await configGumletClient();
       try {
-        await client.videos.delete(videoId);
+        await client.delete(`/video/assets/${videoId}`);
         await strapi.entityService.delete(model, id);
         return true;
       } catch (error) {
@@ -85,34 +85,22 @@ export default factories.createCoreService<any, any>(
     },
 
     async update(id: string, videoId: string, data: any) {
-      const client = await configClient();
       try {
-        const updatedVideo = await client.videos.update(videoId, data);
+        const client = await configGumletClient();
 
-        let customVideo = {
-          title: updatedVideo.title,
-          description: updatedVideo.description,
-          _public: updatedVideo._public,
-          videoId: updatedVideo.videoId,
-          hls: updatedVideo.assets?.hls,
-          iframe: updatedVideo.assets?.iframe,
-          mp4: updatedVideo?.assets?.mp4,
-          player: updatedVideo.assets?.player,
-          thumbnail: updatedVideo?.assets?.thumbnail,
-          tags: updatedVideo.tags,
-          metadata: updatedVideo.metadata,
-        } as CustomVideo;
-        if (!customVideo._public) {
-          customVideo = await replacePrivateVideoTokens(
-            customVideo,
-            '11111111-1111-1111-1111-111111111111'
-          );
-        }
-        const res = await strapi.entityService.update(model, id, {
-          data: customVideo,
+        await client.post('/video/assets/update', {
+          asset_id: videoId,
+          ...data,
         });
+        console.log('Updated video on gumlet');
+
+        const res = await strapi.entityService.update(model, id, {
+          data: data,
+        });
+        console.log('Update strapi asset');
         return res;
       } catch (error) {
+        console.log(error);
         return false;
       }
     },

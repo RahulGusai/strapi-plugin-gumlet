@@ -37,7 +37,7 @@ const Metadata_1 = __importDefault(require("../../Metadata"));
 const Tags_1 = __importDefault(require("../../Tags"));
 const Toggle_1 = __importDefault(require("../../Toggle"));
 const PlayerView_1 = __importDefault(require("./PlayerView"));
-const UpdateVideoModal = ({ video, update, close, editable }) => {
+const UpdateVideoModal = ({ video, update, close, editable, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: video.title,
         description: video.description,

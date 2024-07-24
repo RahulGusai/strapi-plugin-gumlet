@@ -51,7 +51,7 @@ const permissions_1 = __importDefault(require("../../permissions"));
 const Settings = () => {
     const [settings, setSettings] = (0, react_1.useState)({
         apiKey: '',
-        defaultPublic: true
+        defaultPublic: true,
     });
     const { lockApp, unlockApp } = (0, helper_plugin_1.useOverlayBlocker)();
     const notification = (0, helper_plugin_1.useNotification)();
@@ -86,14 +86,14 @@ const Settings = () => {
         unlockApp();
     });
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(Layout_1.HeaderLayout, { title: 'api.video uploader', primaryAction: react_1.default.createElement(Button_1.Button, { type: "submit", onClick: handleOnSubmit, startIcon: react_1.default.createElement(Check_1.default, null), size: "L" }, "Save") }),
+        react_1.default.createElement(Layout_1.HeaderLayout, { title: 'Gumlet uploader', primaryAction: react_1.default.createElement(Button_1.Button, { type: "submit", onClick: handleOnSubmit, startIcon: react_1.default.createElement(Check_1.default, null), size: "L" }, "Save") }),
         react_1.default.createElement(Layout_1.ContentLayout, null,
             react_1.default.createElement(Box_1.Box, { background: "neutral0", hasRadius: true, shadow: "filterShadow", paddingTop: 6, paddingBottom: 6, paddingLeft: 7, paddingRight: 7 },
                 react_1.default.createElement(Stack_1.Stack, { size: 4 },
                     react_1.default.createElement(Typography_1.Typography, { variant: "delta", as: "h2" }, "Settings"),
                     react_1.default.createElement(Grid_1.Grid, { gap: 6 },
                         react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
-                            react_1.default.createElement(Fields_1.default, { name: "API Key", label: "API Key", value: settings.apiKey, placeholder: "Enter your API Key", description: "Generated in the api.video's dashboard and used for authenticating API calls.", detailsLink: "https://dashboard.api.video", isPassword: true, onChange: handleChange })),
+                            react_1.default.createElement(Fields_1.default, { name: "API Key", label: "API Key", value: settings.apiKey, placeholder: "Enter your API Key", description: "Generated in the Gumlet's dashboard and used for authenticating API calls.", detailsLink: "https://dashboard.gumlet.com/", isPassword: true, onChange: handleChange })),
                         react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
                             react_1.default.createElement(Toggle_1.default, { label: "Default Video Privacy", checked: settings.defaultPublic, required: true, onLabel: "Public", offLabel: "Private", onChange: handleSetPublic }))))))));
 };

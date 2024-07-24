@@ -110,7 +110,7 @@ const HomePage = () => {
     <Layout>
       <BaseHeaderLayout
         title="Gumlet video uploader"
-        subtitle="Upload to and manage your api.video library directly within Strapi"
+        subtitle="Upload to and manage your Gumlet library directly within Strapi"
         as="h2"
         primaryAction={
           isConfigurated && canCreate && <AddButton update={fetchData} />

@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const PluginIcon = () => (react_1.default.createElement("svg", { viewBox: "0 0 854 801", version: "1.1", xmlns: "http://www.w3.org/2000/svg" },
-    react_1.default.createElement("title", null, "api.Video"),
+    react_1.default.createElement("title", null, "Gumlet"),
     react_1.default.createElement("g", { id: "Logo-effects", stroke: "none", strokeWidth: "1", fill: "none", fillRule: "evenodd" },
         react_1.default.createElement("g", { id: "Logo-Effects", transform: "translate(-4400.000000, -800.000000)", fillRule: "nonzero" },
             react_1.default.createElement("g", { id: "LogoFinal-Copy", transform: "translate(4400.000000, 800.000000)" },

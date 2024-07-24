@@ -1,9 +1,9 @@
-import { prefixPluginTranslations } from "@strapi/helper-plugin";
-import pluginPkg from "../../package.json";
-import Initializer from "./components/Initializer";
-import PluginIcon from "./components/PluginIcon";
-import pluginPermissions from "./permissions";
-import pluginId from "./pluginId";
+import { prefixPluginTranslations } from '@strapi/helper-plugin';
+import pluginPkg from '../../package.json';
+import Initializer from './components/Initializer';
+import PluginIcon from './components/PluginIcon';
+import pluginPermissions from './permissions';
+import pluginId from './pluginId';
 
 const name = pluginPkg.strapi.name;
 const displayName = pluginPkg.strapi.displayName;
@@ -18,27 +18,27 @@ export default {
         defaultMessage: displayName,
       },
       permissions: pluginPermissions.mainRead,
-      Component: async () => await import("./pages/App"),
+      Component: async () => await import('./pages/App'),
     });
 
     app.createSettingSection(
       {
         id: pluginId,
         intlLabel: {
-          id: "api.Video Uploader plugin Settings Section",
-          defaultMessage: "api.video Uploader",
+          id: 'Gumlet Video Uploader plugin Settings Section',
+          defaultMessage: 'Gumlet Video Uploader',
         },
       },
       [
         {
           intlLabel: {
-            id: "Settings Section api.video uploader",
-            defaultMessage: "Settings",
+            id: 'Settings Section Gumlet Video Uploader',
+            defaultMessage: 'Settings',
           },
-          id: "strapi-uploader-plugin-settings",
+          id: 'strapi-uploader-plugin-settings',
           to: `/settings/${pluginId}`,
           permissions: pluginPermissions.settingsRoles,
-          Component: async () => await import("./pages/Settings"),
+          Component: async () => await import('./pages/Settings'),
         },
       ]
     );
