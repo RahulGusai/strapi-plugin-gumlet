@@ -1,3 +1,2 @@
-# Strapi plugin strapi-uploader-plugin
+# Strapi Gumlet Video Uploader
 
-A quick description of strapi-uploader-plugin.
