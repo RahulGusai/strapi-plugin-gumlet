@@ -80,7 +80,11 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const client = yield (0, config_1.configGumletClient)();
-                yield client.post('/video/assets/update', Object.assign({ asset_id: videoId }, data));
+                const updateData = Object.assign(Object.assign({}, data), { metadata: data.metadata.reduce((accumulator, currentObject) => {
+                        accumulator[currentObject.key] = currentObject.value;
+                        return accumulator;
+                    }, {}) });
+                yield client.post('/video/assets/update', Object.assign({ asset_id: videoId }, updateData));
                 console.log('Updated video on gumlet');
                 const res = yield strapi.entityService.update(model, id, {
                     data: data,

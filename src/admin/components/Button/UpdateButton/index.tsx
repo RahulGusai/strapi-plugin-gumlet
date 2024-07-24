@@ -32,6 +32,8 @@ const UpdateButton: FC<IUpdateButtonProps> = ({
     const body = {
       title: title,
       description: description,
+      tags: tags,
+      metadata: metadata,
     };
     setIsUploading(true);
 

@@ -69,6 +69,8 @@ const UploadButton: FC<IUploadButtonProps> = ({
           videoId: assetId,
           playbackUrl: playbackUrl,
           thumbnail: thumbnail,
+          tags: tags,
+          metadata: metadata,
         };
         const assetData = await assetsRequests.create(body);
 

@@ -31,6 +31,7 @@ export interface InputData {
     value: string;
   }[];
 }
+
 export interface InputDataMetadata {
   key: string;
   value: string;

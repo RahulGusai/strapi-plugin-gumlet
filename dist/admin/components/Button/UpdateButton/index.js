@@ -46,6 +46,8 @@ const UpdateButton = ({ title, description, tags, metadata, id, videoId, update,
         const body = {
             title: title,
             description: description,
+            tags: tags,
+            metadata: metadata,
         };
         setIsUploading(true);
         try {

@@ -71,9 +71,16 @@ export default factories.createCoreService<any, any>(
       try {
         const client = await configGumletClient();
 
+        const updateData = {
+          ...data,
+          metadata: data.metadata.reduce((accumulator, currentObject) => {
+            accumulator[currentObject.key] = currentObject.value;
+            return accumulator;
+          }, {}),
+        };
         await client.post('/video/assets/update', {
           asset_id: videoId,
-          ...data,
+          ...updateData,
         });
         console.log('Updated video on gumlet');
 
@@ -81,6 +88,7 @@ export default factories.createCoreService<any, any>(
           data: data,
         });
         console.log('Update strapi asset');
+
         return res;
       } catch (error) {
         console.log(error);

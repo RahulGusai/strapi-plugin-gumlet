@@ -76,6 +76,8 @@ const UploadButton = ({ currentFile, title, description, tags, metadata, update,
                     videoId: assetId,
                     playbackUrl: playbackUrl,
                     thumbnail: thumbnail,
+                    tags: tags,
+                    metadata: metadata,
                 };
                 const assetData = yield assets_1.default.create(body);
                 if (assetData) {

@@ -11,8 +11,6 @@ import FieldComp from '../../FieldComp/Fields';
 import UploadButton from '../../Button/UploadButton';
 import ImportZone from './importZone';
 import Tags from '../../Tags';
-import Toggle from '../../Toggle';
-import settingsRequests from '../../../api/settings';
 import { InputData } from '../../../../types';
 import MetadataTable from '../../Metadata';
 
@@ -141,6 +139,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
           editable={true}
         />
 
+        {/* Note: Commenting this since we can't add metadata while creating asset on gumlet */}
         <MetadataTable
           metadata={metadata}
           handleSetMetadata={handleSetMetadata}
