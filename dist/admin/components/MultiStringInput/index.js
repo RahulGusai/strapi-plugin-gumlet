@@ -46,11 +46,13 @@ const MultiStringInput = ({ values, onChange, }) => {
         setInputValues(updatedValues);
         onChange(updatedValues);
     };
-    return (react_1.default.createElement(design_system_1.Stack, { spacing: 5 },
-        react_1.default.createElement(Field_1.FieldLabel, null, "Collection Ids"),
-        inputValues.map((value, index) => (react_1.default.createElement(design_system_1.Stack, { key: index, horizontal: true, spacing: 4 },
-            react_1.default.createElement(Field_1.FieldInput, { placeholder: "Enter a value", value: value, onChange: (e) => handleInputChange(index, e.target.value) }),
-            react_1.default.createElement(Button_1.Button, { onClick: () => handleRemoveInput(index) }, "Remove")))),
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(design_system_1.Stack, { spacing: 5 },
+            react_1.default.createElement(Field_1.FieldLabel, null, "Collection Ids"),
+            inputValues.map((value, index) => (react_1.default.createElement(design_system_1.Stack, { key: index, horizontal: true, spacing: 4 },
+                react_1.default.createElement(Field_1.FieldInput, { placeholder: "Enter a value", value: value, onChange: (e) => handleInputChange(index, e.target.value) }),
+                react_1.default.createElement(Button_1.Button, { onClick: () => handleRemoveInput(index) }, "Remove"))))),
+        react_1.default.createElement("br", null),
         react_1.default.createElement(Button_1.Button, { onClick: handleAddInput }, "Add another value")));
 };
 exports.default = MultiStringInput;

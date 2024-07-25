@@ -31,10 +31,6 @@ const Settings = () => {
 
   const getSettings = async () => {
     const settings = await settingsRequests.get();
-    console.log('DEBUG1');
-    console.log(settings);
-    console.log(settings.collectionIds);
-    console.log('DEBUG2');
     setSettings(settings);
   };
 

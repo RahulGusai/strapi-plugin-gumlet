@@ -36,22 +36,25 @@ const MultiStringInput: React.FC<MultiStringInputProps> = ({
   };
 
   return (
-    <Stack spacing={5}>
-      <FieldLabel>Collection Ids</FieldLabel>
-      {inputValues.map((value, index) => (
-        <Stack key={index} horizontal spacing={4}>
-          <FieldInput
-            placeholder="Enter a value"
-            value={value}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleInputChange(index, e.target.value)
-            }
-          />
-          <Button onClick={() => handleRemoveInput(index)}>Remove</Button>
-        </Stack>
-      ))}
+    <>
+      <Stack spacing={5}>
+        <FieldLabel>Collection Ids</FieldLabel>
+        {inputValues.map((value, index) => (
+          <Stack key={index} horizontal spacing={4}>
+            <FieldInput
+              placeholder="Enter a value"
+              value={value}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleInputChange(index, e.target.value)
+              }
+            />
+            <Button onClick={() => handleRemoveInput(index)}>Remove</Button>
+          </Stack>
+        ))}
+      </Stack>
+      <br />
       <Button onClick={handleAddInput}>Add another value</Button>
-    </Stack>
+    </>
   );
 };
 

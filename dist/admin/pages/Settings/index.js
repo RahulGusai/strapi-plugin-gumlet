@@ -58,10 +58,6 @@ const Settings = () => {
     const notification = (0, helper_plugin_1.useNotification)();
     const getSettings = () => __awaiter(void 0, void 0, void 0, function* () {
         const settings = yield settings_1.default.get();
-        console.log('DEBUG1');
-        console.log(settings);
-        console.log(settings.collectionIds);
-        console.log('DEBUG2');
         setSettings(settings);
     });
     (0, react_1.useEffect)(() => {
