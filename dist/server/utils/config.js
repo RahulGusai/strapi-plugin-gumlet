@@ -26,17 +26,21 @@ const getConfig = () => __awaiter(void 0, void 0, void 0, function* () {
     const configKey = yield pluginStore.get({
         key: 'apiKey',
     });
+    const collectionIds = yield pluginStore.get({
+        key: 'collectionIds',
+    });
     const res = {
         apiKey: configKey,
         defaultPublic: defaultPublic !== null && defaultPublic !== void 0 ? defaultPublic : true,
+        collectionIds: collectionIds !== null && collectionIds !== void 0 ? collectionIds : [],
     };
     return res;
 });
 exports.getConfig = getConfig;
-const isGumletApiKeyValid = (apiKey, collectionId) => __awaiter(void 0, void 0, void 0, function* () {
+const isGumletApiKeyValid = (apiKey) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log('checking gumlet API key');
-        const response = yield axios_1.default.get(`https://api.gumlet.com/v1/video/assets/list/${collectionId}`, {
+        const response = yield axios_1.default.get('https://api.gumlet.com/v1/video/sources', {
             headers: {
                 Authorization: `Bearer ${apiKey}`,
             },

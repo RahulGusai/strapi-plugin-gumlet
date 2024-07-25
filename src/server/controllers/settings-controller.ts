@@ -1,5 +1,5 @@
-import { Strapi } from "@strapi/strapi";
-import { isAllowedTo } from ".";
+import { Strapi } from '@strapi/strapi';
+import { isAllowedTo } from '.';
 import {
   mainCreateAction,
   mainDeleteAction,
@@ -7,7 +7,7 @@ import {
   mainUpdateAction,
   settingsReadAction,
   settingsUpdateAction,
-} from "../../admin/actions";
+} from '../../admin/actions';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getSettings(ctx: any) {
@@ -22,11 +22,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.forbidden();
       }
 
-      console.log("controller.getSettings");
+      console.log('controller.getSettings');
 
       return await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("settings")
+        .plugin('strapi-uploader-plugin')
+        .service('settings')
         .getSettings(ctx);
     } catch (err) {
       ctx.throw(500, err);
@@ -38,11 +38,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.forbidden();
       }
 
-      console.log("controller.saveSettings");
+      console.log('controller.saveSettings');
 
       return await strapi
-        .plugin("strapi-uploader-plugin")
-        .service("settings")
+        .plugin('strapi-uploader-plugin')
+        .service('settings')
         .saveSettings(ctx.request.body);
     } catch (err) {
       ctx.throw(500, err);

@@ -24,9 +24,13 @@ exports.default = ({ strapi }) => ({
             const configKey = yield pluginStore.get({
                 key: 'apiKey',
             });
+            const collectionIds = yield pluginStore.get({
+                key: 'collectionIds',
+            });
             const res = {
                 apiKey: configKey,
                 defaultPublic: (defaultPublic !== null && defaultPublic !== void 0 ? defaultPublic : true),
+                collectionIds: (collectionIds !== null && collectionIds !== void 0 ? collectionIds : []),
             };
             return res;
         });
@@ -39,8 +43,7 @@ exports.default = ({ strapi }) => ({
                 name: 'strapi-uploader-plugin',
             });
             try {
-                const isValid = yield (0, config_1.isGumletApiKeyValid)(settings.apiKey, '669d74091c2a88fdb5b2759f');
-                console.log(isValid);
+                const isValid = yield (0, config_1.isGumletApiKeyValid)(settings.apiKey);
                 if (isValid) {
                     yield pluginStore.set({
                         key: 'apiKey',
@@ -49,6 +52,10 @@ exports.default = ({ strapi }) => ({
                     yield pluginStore.set({
                         key: 'defaultPublic',
                         value: settings.defaultPublic,
+                    });
+                    yield pluginStore.set({
+                        key: 'collectionIds',
+                        value: settings.collectionIds,
                     });
                     return true;
                 }

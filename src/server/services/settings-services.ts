@@ -18,12 +18,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       key: 'apiKey',
     });
 
+    const collectionIds = await pluginStore.get({
+      key: 'collectionIds',
+    });
+
     const res: CustomSettings = {
       apiKey: configKey as string,
       defaultPublic: (defaultPublic ?? true) as boolean,
+      collectionIds: (collectionIds ?? []) as string[],
     };
     return res;
   },
+
   async saveSettings(settings: CustomSettings) {
     const pluginStore = strapi.store({
       environment: strapi.config.environment,
@@ -32,11 +38,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     });
 
     try {
-      const isValid = await isGumletApiKeyValid(
-        settings.apiKey,
-        '669d74091c2a88fdb5b2759f'
-      );
-      console.log(isValid);
+      const isValid = await isGumletApiKeyValid(settings.apiKey);
       if (isValid) {
         await pluginStore.set({
           key: 'apiKey',
@@ -47,6 +49,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           key: 'defaultPublic',
           value: settings.defaultPublic,
         });
+
+        await pluginStore.set({
+          key: 'collectionIds',
+          value: settings.collectionIds,
+        });
+
         return true;
       } else {
         return false;

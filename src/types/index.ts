@@ -20,6 +20,7 @@ export interface CustomAssets {
 export interface CustomSettings {
   apiKey: string;
   defaultPublic: boolean;
+  collectionIds: string[];
 }
 
 export interface InputData {
@@ -30,6 +31,7 @@ export interface InputData {
     key: string;
     value: string;
   }[];
+  collectionId?: string;
 }
 
 export interface InputDataMetadata {

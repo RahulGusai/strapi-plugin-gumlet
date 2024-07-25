@@ -16,19 +16,25 @@ import Check from '@strapi/icons/Check';
 import { CustomSettings } from '../../../types';
 import settingsRequests from '../../api/settings';
 import FieldComp from '../../components/FieldComp/Fields';
-import Toggle from '../../components/Toggle';
 import pluginPermissions from '../../permissions';
+import MultiStringInput from '../../components/MultiStringInput';
 
 const Settings = () => {
   const [settings, setSettings] = useState<CustomSettings>({
     apiKey: '',
     defaultPublic: true,
+    collectionIds: [],
   });
+
   const { lockApp, unlockApp } = useOverlayBlocker();
   const notification = useNotification();
 
   const getSettings = async () => {
     const settings = await settingsRequests.get();
+    console.log('DEBUG1');
+    console.log(settings);
+    console.log(settings.collectionIds);
+    console.log('DEBUG2');
     setSettings(settings);
   };
 
@@ -40,8 +46,13 @@ const Settings = () => {
     setSettings({ ...settings, apiKey: event.target.value });
   };
 
-  const handleSetPublic = (event: ChangeEvent<HTMLInputElement>) => {
-    setSettings({ ...settings, defaultPublic: event.target.checked });
+  const updateCollectionIds = (collectionIds: string[]) => {
+    setSettings((settings) => {
+      return {
+        ...settings,
+        collectionIds: collectionIds,
+      };
+    });
   };
 
   const handleOnSubmit = async () => {
@@ -107,14 +118,10 @@ const Settings = () => {
                 />
               </GridItem>
               <GridItem col={12} s={12}>
-                <Toggle
-                  label="Default Video Privacy"
-                  checked={settings.defaultPublic}
-                  required={true}
-                  onLabel="Public"
-                  offLabel="Private"
-                  onChange={handleSetPublic}
-                />
+                <MultiStringInput
+                  values={settings.collectionIds}
+                  onChange={updateCollectionIds}
+                ></MultiStringInput>
               </GridItem>
             </Grid>
           </Stack>

@@ -35,6 +35,7 @@ const UploadButton_1 = __importDefault(require("../../Button/UploadButton"));
 const importZone_1 = __importDefault(require("./importZone"));
 const Tags_1 = __importDefault(require("../../Tags"));
 const Metadata_1 = __importDefault(require("../../Metadata"));
+const CollectionId_1 = __importDefault(require("../../CollectionId"));
 const AddVideoModal = ({ update, close, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: '',
@@ -46,13 +47,14 @@ const AddVideoModal = ({ update, close, }) => {
                 value: 'Strapi',
             },
         ],
+        collectionId: '',
     });
     const [file, setFile] = (0, react_1.useState)();
     const [initialState, setInitialState] = (0, react_1.useState)(0);
     // CONSTANTS
     const videoRef = (0, react_1.useRef)(null);
     const sourceRef = (0, react_1.useRef)(null);
-    const { title, description, tags, metadata } = inputData;
+    const { title, description, tags, metadata, collectionId } = inputData;
     const displayVideoFrame = (video, source, file) => {
         // Object Url as the video source
         source.setAttribute('src', URL.createObjectURL(file));
@@ -62,6 +64,9 @@ const AddVideoModal = ({ update, close, }) => {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setInputData((prevInputData) => (Object.assign(Object.assign({}, prevInputData), { [name]: value })));
+    };
+    const updateCollectionId = (collectionId) => {
+        setInputData(Object.assign(Object.assign({}, inputData), { collectionId: collectionId }));
     };
     const handleSetTag = (tag) => {
         if (tag) {
@@ -100,9 +105,11 @@ const AddVideoModal = ({ update, close, }) => {
             react_1.default.createElement("br", null),
             react_1.default.createElement(Fields_1.default, { name: "description", label: "Description", value: description || '', placeholder: "Enter a description", onChange: handleChange, required: true }),
             react_1.default.createElement("br", null),
+            react_1.default.createElement(CollectionId_1.default, { name: "Collection Id", description: "Collection Id", required: true, selectedValue: collectionId, onChange: updateCollectionId }),
+            react_1.default.createElement("br", null),
             react_1.default.createElement(Tags_1.default, { handleSetTag: handleSetTag, handleRemoveTag: handleRemoveTag, tags: tags || [], editable: true }),
             react_1.default.createElement(Metadata_1.default, { metadata: metadata, handleSetMetadata: handleSetMetadata, handleRemoveMetadata: handleRemoveMetadata, editable: true })),
         react_1.default.createElement(ModalLayout_1.ModalFooter, { startActions: react_1.default.createElement(Button_1.Button, { onClick: close, variant: "tertiary" }, "Cancel"), endActions: react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(UploadButton_1.default, { currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], update: update, close: close })) })));
+                react_1.default.createElement(UploadButton_1.default, { currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, update: update, close: close })) })));
 };
 exports.default = AddVideoModal;

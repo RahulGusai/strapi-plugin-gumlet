@@ -24,8 +24,8 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
             const client = yield (0, config_1.configGumletClient)();
             try {
                 const gumletResponse = yield client.post('/video/assets/upload', {
-                    collection_id: gumlet_1.GUMLET_COLLECTION_ID,
                     format: gumlet_1.GUMLET_VIDEO_FORMAT,
+                    collection_id: data['collectionId'],
                     title: data['title'],
                     description: data['description'],
                     tag: data['tags'],

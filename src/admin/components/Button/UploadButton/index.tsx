@@ -6,7 +6,6 @@ import { useNotification } from '@strapi/helper-plugin';
 
 import CloudUpload from '@strapi/icons/CloudUpload';
 import axios from 'axios';
-import { Thumbnail } from '../../Videos/styles';
 
 export interface IUploadButtonProps {
   currentFile: File | undefined;
@@ -14,6 +13,7 @@ export interface IUploadButtonProps {
   description: string;
   tags: string[];
   metadata: { key: string; value: string }[];
+  collectionId: string;
   update: () => void;
   close: () => void;
 }
@@ -24,6 +24,7 @@ const UploadButton: FC<IUploadButtonProps> = ({
   description,
   tags,
   metadata,
+  collectionId,
   update,
   close,
 }): JSX.Element => {
@@ -34,7 +35,8 @@ const UploadButton: FC<IUploadButtonProps> = ({
   const uploadIsDisabled =
     currentFile === undefined ||
     title.trim().length < 1 ||
-    description.trim().length < 1;
+    description.trim().length < 1 ||
+    collectionId.length == 0;
 
   const fileInputChange = async () => {
     const body = {
@@ -42,6 +44,7 @@ const UploadButton: FC<IUploadButtonProps> = ({
       description: description,
       tags: tags,
       metadata: metadata,
+      collectionId: collectionId,
     };
     if (currentFile) {
       const { uploadUrl, assetId, thumbnail, playbackUrl } =

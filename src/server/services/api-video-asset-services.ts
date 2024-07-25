@@ -16,8 +16,8 @@ export default factories.createCoreService<any, any>(
 
       try {
         const gumletResponse = await client.post('/video/assets/upload', {
-          collection_id: GUMLET_COLLECTION_ID,
           format: GUMLET_VIDEO_FORMAT,
+          collection_id: data['collectionId'],
           title: data['title'],
           description: data['description'],
           tag: data['tags'],

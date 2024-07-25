@@ -17,18 +17,23 @@ const getConfig = async () => {
     key: 'apiKey',
   });
 
+  const collectionIds = await pluginStore.get({
+    key: 'collectionIds',
+  });
+
   const res: CustomSettings = {
     apiKey: configKey,
     defaultPublic: defaultPublic ?? true,
+    collectionIds: collectionIds ?? [],
   };
   return res;
 };
 
-const isGumletApiKeyValid = async (apiKey: string, collectionId: string) => {
+const isGumletApiKeyValid = async (apiKey: string) => {
   try {
     console.log('checking gumlet API key');
     const response = await axios.get(
-      `https://api.gumlet.com/v1/video/assets/list/${collectionId}`,
+      'https://api.gumlet.com/v1/video/sources',
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,

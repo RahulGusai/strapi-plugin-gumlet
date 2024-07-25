@@ -46,17 +46,22 @@ const Typography_1 = require("@strapi/design-system/Typography");
 const Check_1 = __importDefault(require("@strapi/icons/Check"));
 const settings_1 = __importDefault(require("../../api/settings"));
 const Fields_1 = __importDefault(require("../../components/FieldComp/Fields"));
-const Toggle_1 = __importDefault(require("../../components/Toggle"));
 const permissions_1 = __importDefault(require("../../permissions"));
+const MultiStringInput_1 = __importDefault(require("../../components/MultiStringInput"));
 const Settings = () => {
     const [settings, setSettings] = (0, react_1.useState)({
         apiKey: '',
         defaultPublic: true,
+        collectionIds: [],
     });
     const { lockApp, unlockApp } = (0, helper_plugin_1.useOverlayBlocker)();
     const notification = (0, helper_plugin_1.useNotification)();
     const getSettings = () => __awaiter(void 0, void 0, void 0, function* () {
         const settings = yield settings_1.default.get();
+        console.log('DEBUG1');
+        console.log(settings);
+        console.log(settings.collectionIds);
+        console.log('DEBUG2');
         setSettings(settings);
     });
     (0, react_1.useEffect)(() => {
@@ -65,8 +70,10 @@ const Settings = () => {
     const handleChange = (event) => {
         setSettings(Object.assign(Object.assign({}, settings), { apiKey: event.target.value }));
     };
-    const handleSetPublic = (event) => {
-        setSettings(Object.assign(Object.assign({}, settings), { defaultPublic: event.target.checked }));
+    const updateCollectionIds = (collectionIds) => {
+        setSettings((settings) => {
+            return Object.assign(Object.assign({}, settings), { collectionIds: collectionIds });
+        });
     };
     const handleOnSubmit = () => __awaiter(void 0, void 0, void 0, function* () {
         lockApp();
@@ -95,7 +102,7 @@ const Settings = () => {
                         react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
                             react_1.default.createElement(Fields_1.default, { name: "API Key", label: "API Key", value: settings.apiKey, placeholder: "Enter your API Key", description: "Generated in the Gumlet's dashboard and used for authenticating API calls.", detailsLink: "https://dashboard.gumlet.com/", isPassword: true, onChange: handleChange })),
                         react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
-                            react_1.default.createElement(Toggle_1.default, { label: "Default Video Privacy", checked: settings.defaultPublic, required: true, onLabel: "Public", offLabel: "Private", onChange: handleSetPublic }))))))));
+                            react_1.default.createElement(MultiStringInput_1.default, { values: settings.collectionIds, onChange: updateCollectionIds }))))))));
 };
 exports.default = () => (react_1.default.createElement(helper_plugin_1.CheckPagePermissions, { permissions: permissions_1.default.settingsRoles },
     react_1.default.createElement(Settings, null)));

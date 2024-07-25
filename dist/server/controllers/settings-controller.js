@@ -22,10 +22,10 @@ exports.default = ({ strapi }) => ({
                     !!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainDeleteAction)) {
                     return ctx.forbidden();
                 }
-                console.log("controller.getSettings");
+                console.log('controller.getSettings');
                 return yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("settings")
+                    .plugin('strapi-uploader-plugin')
+                    .service('settings')
                     .getSettings(ctx);
             }
             catch (err) {
@@ -39,10 +39,10 @@ exports.default = ({ strapi }) => ({
                 if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.settingsUpdateAction)) {
                     return ctx.forbidden();
                 }
-                console.log("controller.saveSettings");
+                console.log('controller.saveSettings');
                 return yield strapi
-                    .plugin("strapi-uploader-plugin")
-                    .service("settings")
+                    .plugin('strapi-uploader-plugin')
+                    .service('settings')
                     .saveSettings(ctx.request.body);
             }
             catch (err) {

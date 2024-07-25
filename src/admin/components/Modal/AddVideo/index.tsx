@@ -13,6 +13,7 @@ import ImportZone from './importZone';
 import Tags from '../../Tags';
 import { InputData } from '../../../../types';
 import MetadataTable from '../../Metadata';
+import CollectionId from '../../CollectionId';
 
 interface IAddVideoModalProps {
   close: () => void;
@@ -33,6 +34,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         value: 'Strapi',
       },
     ],
+    collectionId: '',
   });
 
   const [file, setFile] = useState<File | undefined>();
@@ -41,7 +43,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
   // CONSTANTS
   const videoRef = useRef<HTMLVideoElement>(null);
   const sourceRef = useRef<HTMLSourceElement>(null);
-  const { title, description, tags, metadata } = inputData;
+  const { title, description, tags, metadata, collectionId } = inputData;
 
   const displayVideoFrame = (
     video: HTMLVideoElement,
@@ -57,6 +59,10 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setInputData((prevInputData) => ({ ...prevInputData, [name]: value }));
+  };
+
+  const updateCollectionId = (collectionId: string) => {
+    setInputData({ ...inputData, collectionId: collectionId });
   };
 
   const handleSetTag = (tag: string) => {
@@ -132,6 +138,15 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         />
         <br />
 
+        <CollectionId
+          name="Collection Id"
+          description="Collection Id"
+          required={true}
+          selectedValue={collectionId}
+          onChange={updateCollectionId}
+        ></CollectionId>
+        <br />
+
         <Tags
           handleSetTag={handleSetTag}
           handleRemoveTag={handleRemoveTag}
@@ -139,7 +154,6 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
           editable={true}
         />
 
-        {/* Note: Commenting this since we can't add metadata while creating asset on gumlet */}
         <MetadataTable
           metadata={metadata}
           handleSetMetadata={handleSetMetadata}
@@ -161,6 +175,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
               description={description}
               tags={tags || []}
               metadata={metadata || []}
+              collectionId={collectionId}
               update={update}
               close={close}
             />
