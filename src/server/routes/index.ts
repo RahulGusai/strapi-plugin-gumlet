@@ -1,11 +1,11 @@
-import apiVideoContentApiRoutes from "./content-api-routes";
-import apiVideoAdminRoutes from "./admin-routes";
-import apiVideoSettingsRoutes from "./settings-routes";
+import apiVideoContentApiRoutes from './content-api-routes';
+import apiVideoAdminRoutes from './admin-routes';
+import apiVideoSettingsRoutes from './settings-routes';
 
 const routes = {
   // routes for the admin panel (/strapi-uploader-plugin/api-video-asset/...)
   admin: {
-    type: "admin",
+    type: 'admin',
     routes: apiVideoAdminRoutes,
   },
   // routes for the plugin settings panel (/strapi-uploader-plugin/settings)
@@ -13,8 +13,8 @@ const routes = {
     routes: apiVideoSettingsRoutes,
   },
   // routes for the content api (/api/strapi-uploader-plugin/...)
-  "content-api": {
-    type: "content-api",
+  'content-api': {
+    type: 'content-api',
     routes: apiVideoContentApiRoutes,
   },
 };

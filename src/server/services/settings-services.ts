@@ -1,6 +1,7 @@
 import { Strapi } from '@strapi/strapi';
 import { CustomSettings } from '../../types';
-import { isGumletApiKeyValid } from '../utils/config';
+import { configGumletClient, isGumletApiKeyValid } from '../utils/config';
+import fetchCollectionIdMap from '../../admin/utils/collectionId';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getSettings() {
@@ -26,11 +27,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       key: 'collectionIds',
     });
 
+    const collectionIdMap = await pluginStore.get({
+      key: 'collectionIdMap',
+    });
+
     const res: CustomSettings = {
       apiKey: configKey as string,
       defaultPublic: (defaultPublic ?? true) as boolean,
       videoFormat: (videoFormat ?? 'MP4') as string,
       collectionIds: (collectionIds ?? []) as string[],
+      collectionIdMap: (collectionIdMap ?? {}) as { [key: string]: string },
     };
     return res;
   },
@@ -63,6 +69,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         await pluginStore.set({
           key: 'collectionIds',
           value: settings.collectionIds,
+        });
+
+        const collectionIdMap = await fetchCollectionIdMap(
+          settings.collectionIds
+        );
+        await pluginStore.set({
+          key: 'collectionIdMap',
+          value: collectionIdMap,
         });
 
         return true;

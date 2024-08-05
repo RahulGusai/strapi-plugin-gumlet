@@ -4,10 +4,10 @@ import { Button } from '@strapi/design-system/Button';
 import { useNotification } from '@strapi/helper-plugin';
 import CloudUpload from '@strapi/icons/CloudUpload';
 import axios from 'axios';
-import { Body } from '@strapi/helper-plugin';
 
 export interface IUploadButtonProps {
   uploadMethod: string | undefined;
+  dropboxAccessToken: string | undefined;
   currentFile: File | undefined;
   title: string;
   description: string;
@@ -15,12 +15,14 @@ export interface IUploadButtonProps {
   metadata: { key: string; value: string }[];
   collectionId: string;
   videoURL: string | undefined;
+  selectedFilePath: string;
   update: () => void;
   close: () => void;
 }
 
 const UploadButton: FC<IUploadButtonProps> = ({
   uploadMethod,
+  dropboxAccessToken,
   currentFile,
   title,
   description,
@@ -28,6 +30,7 @@ const UploadButton: FC<IUploadButtonProps> = ({
   metadata,
   collectionId,
   videoURL,
+  selectedFilePath,
   update,
   close,
 }): JSX.Element => {
@@ -46,6 +49,8 @@ const UploadButton: FC<IUploadButtonProps> = ({
   if (uploadMethod === 'url')
     uploadIsDisabled =
       uploadIsDisabled || videoURL === undefined || videoURL.length == 0;
+  if (uploadMethod === 'dropbox')
+    uploadIsDisabled = uploadIsDisabled || selectedFilePath === undefined;
 
   const fileInputChange = async () => {
     const body = {
@@ -62,6 +67,10 @@ const UploadButton: FC<IUploadButtonProps> = ({
 
     if (uploadMethod == 'url') {
       uploadViaURL(body, videoURL);
+    }
+
+    if (uploadMethod == 'dropbox') {
+      uploadViaDropbox(body, selectedFilePath);
     }
   };
 
@@ -101,6 +110,31 @@ const UploadButton: FC<IUploadButtonProps> = ({
   };
 
   const uploadViaURL = async (body, videoURL: string) => {
+    const { assetId, thumbnail, playbackUrl } =
+      await assetsRequests.createVideoAsset({ ...body, videoURL: videoURL });
+
+    const strapiAssetData = {
+      ...body,
+      videoId: assetId,
+      playbackUrl: playbackUrl,
+      thumbnail: thumbnail,
+    };
+    createStrapiAsset(strapiAssetData);
+
+    close();
+  };
+
+  const uploadViaDropbox = async (body, selectedFilePath: string) => {
+    // Fetch the video URL here via dropbox API.
+    const Dropbox = require('dropbox').Dropbox;
+    const dbx = new Dropbox({ accessToken: dropboxAccessToken });
+
+    const response = await dbx.filesGetTemporaryLink({
+      path: selectedFilePath,
+    });
+
+    const videoURL = response.result.link;
+
     const { assetId, thumbnail, playbackUrl } =
       await assetsRequests.createVideoAsset({ ...body, videoURL: videoURL });
 

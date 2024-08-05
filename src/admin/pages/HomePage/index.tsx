@@ -88,27 +88,12 @@ const HomePage = () => {
     const accessToken = params.get('access_token');
 
     if (accessToken) {
-      setDropboxAccessToken(setDropboxAccessToken);
+      setDropboxAccessToken(accessToken);
       setIsVisible(true);
     } else {
       console.log('No access token found in the URL.');
     }
   }, []);
-
-  const fetchDropboxFiles = async (accessToken) => {
-    var Dropbox = require('dropbox').Dropbox;
-    var dbx = new Dropbox({ accessToken });
-
-    const files = await dbx.filesListFolder({ path: '' });
-
-    const videos = files.result.entries.filter(
-      (file) => file['.tag'] === 'file'
-    );
-    const response = await dbx.filesGetTemporaryLink({
-      path: videos[0].path_lower,
-    });
-    console.log(response);
-  };
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -123,7 +108,15 @@ const HomePage = () => {
         subtitle="Upload to and manage your Gumlet library directly within Strapi"
         as="h2"
         primaryAction={
-          isConfigurated && canCreate && <AddButton update={fetchData} />
+          isConfigurated &&
+          canCreate && (
+            <AddButton
+              isVisible={isVisible}
+              setIsVisible={setIsVisible}
+              update={fetchData}
+              dropboxAccessToken={dropboxAccessToken}
+            />
+          )
         }
       />
 

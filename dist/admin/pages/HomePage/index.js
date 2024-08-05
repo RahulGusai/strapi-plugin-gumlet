@@ -98,30 +98,21 @@ const HomePage = () => {
         const params = new URLSearchParams(hash);
         const accessToken = params.get('access_token');
         if (accessToken) {
-            setDropboxAccessToken(setDropboxAccessToken);
+            setDropboxAccessToken(accessToken);
             setIsVisible(true);
         }
         else {
             console.log('No access token found in the URL.');
         }
     }, []);
-    const fetchDropboxFiles = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
-        var Dropbox = require('dropbox').Dropbox;
-        var dbx = new Dropbox({ accessToken });
-        const files = yield dbx.filesListFolder({ path: '' });
-        const videos = files.result.entries.filter((file) => file['.tag'] === 'file');
-        const response = yield dbx.filesGetTemporaryLink({
-            path: videos[0].path_lower,
-        });
-        console.log(response);
-    });
     const handleSearch = (value) => {
         setSearch(value);
     };
     if (isLoadingConfiguration || isLoadingPermissions)
         return react_1.default.createElement(helper_plugin_1.LoadingIndicatorPage, null);
     return (react_1.default.createElement(Layout_1.Layout, null,
-        react_1.default.createElement(Layout_1.BaseHeaderLayout, { title: "Gumlet video uploader", subtitle: "Upload to and manage your Gumlet library directly within Strapi", as: "h2", primaryAction: isConfigurated && canCreate && react_1.default.createElement(AddButton_1.default, { update: fetchData }) }),
+        react_1.default.createElement(Layout_1.BaseHeaderLayout, { title: "Gumlet video uploader", subtitle: "Upload to and manage your Gumlet library directly within Strapi", as: "h2", primaryAction: isConfigurated &&
+                canCreate && (react_1.default.createElement(AddButton_1.default, { isVisible: isVisible, setIsVisible: setIsVisible, update: fetchData, dropboxAccessToken: dropboxAccessToken })) }),
         isConfigurated ? (!isLoadingData && (assets === null || assets === void 0 ? void 0 : assets.length) > 0 ? (react_1.default.createElement(Layout_1.ContentLayout, null,
             react_1.default.createElement(SearchBar_1.default, { search: search, handleSearch: (query) => handleSearch(query), clearSearch: () => setSearch('') }),
             react_1.default.createElement(styles_1.GridBroadcast, null, assets

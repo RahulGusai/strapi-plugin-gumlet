@@ -2,7 +2,6 @@ import { factories, Strapi } from '@strapi/strapi';
 import pluginId from '../../admin/pluginId';
 import { CustomVideo } from '../../types';
 import { configGumletClient, getConfig } from '../utils/config';
-import settingsRequests from '../../admin/api/settings';
 
 const model = `plugin::${pluginId}.api-video-asset`;
 

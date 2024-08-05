@@ -41,7 +41,7 @@ const Button_1 = require("@strapi/design-system/Button");
 const helper_plugin_1 = require("@strapi/helper-plugin");
 const CloudUpload_1 = __importDefault(require("@strapi/icons/CloudUpload"));
 const axios_1 = __importDefault(require("axios"));
-const UploadButton = ({ uploadMethod, currentFile, title, description, tags, metadata, collectionId, videoURL, update, close, }) => {
+const UploadButton = ({ uploadMethod, dropboxAccessToken, currentFile, title, description, tags, metadata, collectionId, videoURL, selectedFilePath, update, close, }) => {
     const [progress, setProgress] = (0, react_1.useState)(0);
     const [isUploading, setIsUploading] = (0, react_1.useState)(false);
     const notification = (0, helper_plugin_1.useNotification)();
@@ -54,6 +54,8 @@ const UploadButton = ({ uploadMethod, currentFile, title, description, tags, met
     if (uploadMethod === 'url')
         uploadIsDisabled =
             uploadIsDisabled || videoURL === undefined || videoURL.length == 0;
+    if (uploadMethod === 'dropbox')
+        uploadIsDisabled = uploadIsDisabled || selectedFilePath === undefined;
     const fileInputChange = () => __awaiter(void 0, void 0, void 0, function* () {
         const body = {
             title: title,
@@ -67,6 +69,9 @@ const UploadButton = ({ uploadMethod, currentFile, title, description, tags, met
         }
         if (uploadMethod == 'url') {
             uploadViaURL(body, videoURL);
+        }
+        if (uploadMethod == 'dropbox') {
+            uploadViaDropbox(body, selectedFilePath);
         }
     });
     const uploadViaFile = (body, currentFile) => __awaiter(void 0, void 0, void 0, function* () {
@@ -94,6 +99,19 @@ const UploadButton = ({ uploadMethod, currentFile, title, description, tags, met
         close();
     });
     const uploadViaURL = (body, videoURL) => __awaiter(void 0, void 0, void 0, function* () {
+        const { assetId, thumbnail, playbackUrl } = yield assets_1.default.createVideoAsset(Object.assign(Object.assign({}, body), { videoURL: videoURL }));
+        const strapiAssetData = Object.assign(Object.assign({}, body), { videoId: assetId, playbackUrl: playbackUrl, thumbnail: thumbnail });
+        createStrapiAsset(strapiAssetData);
+        close();
+    });
+    const uploadViaDropbox = (body, selectedFilePath) => __awaiter(void 0, void 0, void 0, function* () {
+        // Fetch the video URL here via dropbox API.
+        const Dropbox = require('dropbox').Dropbox;
+        const dbx = new Dropbox({ accessToken: dropboxAccessToken });
+        const response = yield dbx.filesGetTemporaryLink({
+            path: selectedFilePath,
+        });
+        const videoURL = response.result.link;
         const { assetId, thumbnail, playbackUrl } = yield assets_1.default.createVideoAsset(Object.assign(Object.assign({}, body), { videoURL: videoURL }));
         const strapiAssetData = Object.assign(Object.assign({}, body), { videoId: assetId, playbackUrl: playbackUrl, thumbnail: thumbnail });
         createStrapiAsset(strapiAssetData);

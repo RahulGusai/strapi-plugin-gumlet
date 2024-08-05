@@ -48,7 +48,8 @@ const CollectionId_1 = __importDefault(require("../../CollectionId"));
 const Stack_1 = require("@strapi/design-system/Stack");
 const styled_components_1 = __importDefault(require("styled-components"));
 const Field_1 = require("@strapi/design-system/Field");
-const AddVideoModal = ({ update, close, }) => {
+const DropboxView_1 = __importDefault(require("../DropboxView/DropboxView"));
+const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: '',
         description: '',
@@ -64,15 +65,18 @@ const AddVideoModal = ({ update, close, }) => {
     const [file, setFile] = (0, react_1.useState)();
     const [initialState, setInitialState] = (0, react_1.useState)(0);
     const [uploadMethod, setUploadMethod] = (0, react_1.useState)(undefined);
+    const [dropboxFilePaths, setDropboxFilePaths] = (0, react_1.useState)([]);
+    const [selectedFilePath, setSelectedFilePath] = (0, react_1.useState)(undefined);
     // CONSTANTS
     const videoRef = (0, react_1.useRef)(null);
     const sourceRef = (0, react_1.useRef)(null);
     const { title, description, tags, metadata, collectionId, videoURL } = inputData;
-    // useEffect(() => {
-    //   if (dropboxAccessToken != undefined) {
-    //     setUploadMethod('dropbox');
-    //   }
-    // }, [dropboxAccessToken]);
+    (0, react_1.useEffect)(() => {
+        if (dropboxAccessToken) {
+            setUploadMethod('dropbox');
+            fetchDropboxFiles(dropboxAccessToken);
+        }
+    }, [dropboxAccessToken]);
     const displayVideoFrame = (video, source, file) => {
         // Object Url as the video source
         source.setAttribute('src', URL.createObjectURL(file));
@@ -107,6 +111,9 @@ const AddVideoModal = ({ update, close, }) => {
         const newMetadata = (inputData === null || inputData === void 0 ? void 0 : inputData.metadata) && (inputData === null || inputData === void 0 ? void 0 : inputData.metadata.filter((m) => m !== metadata));
         setInputData(Object.assign(Object.assign({}, inputData), { metadata: newMetadata }));
     };
+    const handleRadioChange = (filePath) => {
+        setSelectedFilePath(filePath);
+    };
     const onFileSelected = (file) => {
         console.log(file, 'file');
         setFile(file);
@@ -127,15 +134,12 @@ const AddVideoModal = ({ update, close, }) => {
         var Dropbox = require('dropbox').Dropbox;
         var dbx = new Dropbox({ accessToken });
         const files = yield dbx.filesListFolder({ path: '' });
-        const videos = files.result.entries.filter((file) => file['.tag'] === 'file');
-        return videos.map((video) => {
+        const filePaths = files.result.entries
+            .filter((file) => file['.tag'] === 'file')
+            .map((video) => {
             return video.path_lower;
         });
-        // for (const video of videos) {
-        //   const response = await dbx.filesGetTemporaryLink({
-        //     path: video.path_lower,
-        //   });
-        // }
+        setDropboxFilePaths(filePaths);
     });
     const renderUploadMethod = () => {
         if (uploadMethod === 'file') {
@@ -148,10 +152,14 @@ const AddVideoModal = ({ update, close, }) => {
                     react_1.default.createElement(Field_1.FieldInput, { placeholder: "Enter URL to import a file", type: "text", onChange: updateVideoURL }))));
         }
         else if (uploadMethod === 'dropbox') {
-            connectToDropbox();
-            // <Wrapper>
-            //   <Typography>Connecting to Gumlet...</Typography>
-            // </Wrapper>;
+            if (dropboxAccessToken) {
+                return (react_1.default.createElement(DropboxView_1.default, { setUploadMethod: setUploadMethod, handleRadioChange: handleRadioChange, dropboxFilePaths: dropboxFilePaths, selectedFilePath: selectedFilePath }));
+            }
+            else {
+                connectToDropbox();
+                return (react_1.default.createElement(Wrapper, null,
+                    react_1.default.createElement(Typography_1.Typography, null, "Connecting to Dropbox...")));
+            }
         }
         else {
             return (react_1.default.createElement(Wrapper, null,
@@ -175,7 +183,7 @@ const AddVideoModal = ({ update, close, }) => {
             react_1.default.createElement(Tags_1.default, { handleSetTag: handleSetTag, handleRemoveTag: handleRemoveTag, tags: tags || [], editable: true }),
             react_1.default.createElement(Metadata_1.default, { metadata: metadata, handleSetMetadata: handleSetMetadata, handleRemoveMetadata: handleRemoveMetadata, editable: true })),
         react_1.default.createElement(ModalLayout_1.ModalFooter, { startActions: react_1.default.createElement(Button_1.Button, { onClick: close, variant: "tertiary" }, "Cancel"), endActions: react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(UploadButton_1.default, { uploadMethod: uploadMethod, currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, videoURL: videoURL, update: update, close: close })) })));
+                react_1.default.createElement(UploadButton_1.default, { uploadMethod: uploadMethod, dropboxAccessToken: dropboxAccessToken, currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, videoURL: videoURL, selectedFilePath: selectedFilePath, update: update, close: close })) })));
 };
 const Wrapper = styled_components_1.default.div `
   width: 100%;
@@ -188,6 +196,21 @@ const Wrapper = styled_components_1.default.div `
   cursor: pointer;
   transition: border 0.4s ease-in-out;
   margin-bottom: 20px;
+
+  &:hover {
+    border: 1px dashed #4642eb;
+  }
+`;
+const DropboxWrapper = styled_components_1.default.div `
+  width: 100%;
+  height: 300px;
+  border: 1px dashed #eaeaea;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: border 0.4s ease-in-out;
+  margin-bottom: 20px;
+  padding: 10px;
 
   &:hover {
     border: 1px dashed #4642eb;

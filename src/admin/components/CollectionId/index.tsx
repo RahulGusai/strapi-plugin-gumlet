@@ -4,6 +4,7 @@ import settingsRequests from '../../api/settings';
 import { Field, FieldLabel } from '@strapi/design-system/Field';
 import { Stack } from '@strapi/design-system/Stack';
 import styled from 'styled-components';
+import fetchCollectionIdMap from '../../utils/collectionId';
 
 const CollectionId = ({
   name,
@@ -13,7 +14,7 @@ const CollectionId = ({
   onChange,
 }) => {
   const [selected, setSelected] = useState(selectedValue);
-  const [collectionIds, setCollectionIds] = useState([]);
+  const [collectionIdMap, setCollectionIdMap] = useState({});
 
   const handleSelectChange = (value: string) => {
     setSelected(value);
@@ -23,8 +24,12 @@ const CollectionId = ({
   useEffect(() => {
     const fetchCollectionIds = async () => {
       try {
-        const { collectionIds } = await settingsRequests.get();
-        setCollectionIds(collectionIds);
+        const { collectionIds, collectionIdMap } = await settingsRequests.get();
+        if (collectionIdMap) {
+          setCollectionIdMap(collectionIdMap);
+        } else {
+          setCollectionIdMap(await fetchCollectionIdMap(collectionIds));
+        }
       } catch (error) {
         console.error('Failed to fetch collection IDs:', error);
       }
@@ -48,9 +53,12 @@ const CollectionId = ({
           value={selected}
           onChange={handleSelectChange}
         >
-          {collectionIds.map((collectionId: string) => (
-            <Option key={collectionId} value={collectionId}>
-              {collectionId}
+          {Object.keys(collectionIdMap).map((collectionName) => (
+            <Option
+              key={collectionIdMap[collectionName]}
+              value={collectionIdMap[collectionName]}
+            >
+              {collectionName}
             </Option>
           ))}
         </Select>

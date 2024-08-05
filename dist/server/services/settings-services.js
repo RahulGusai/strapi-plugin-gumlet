@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("../utils/config");
+const collectionId_1 = __importDefault(require("../../admin/utils/collectionId"));
 exports.default = ({ strapi }) => ({
     getSettings() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30,11 +34,15 @@ exports.default = ({ strapi }) => ({
             const collectionIds = yield pluginStore.get({
                 key: 'collectionIds',
             });
+            const collectionIdMap = yield pluginStore.get({
+                key: 'collectionIdMap',
+            });
             const res = {
                 apiKey: configKey,
                 defaultPublic: (defaultPublic !== null && defaultPublic !== void 0 ? defaultPublic : true),
                 videoFormat: (videoFormat !== null && videoFormat !== void 0 ? videoFormat : 'MP4'),
                 collectionIds: (collectionIds !== null && collectionIds !== void 0 ? collectionIds : []),
+                collectionIdMap: (collectionIdMap !== null && collectionIdMap !== void 0 ? collectionIdMap : {}),
             };
             return res;
         });
@@ -64,6 +72,11 @@ exports.default = ({ strapi }) => ({
                     yield pluginStore.set({
                         key: 'collectionIds',
                         value: settings.collectionIds,
+                    });
+                    const collectionIdMap = yield (0, collectionId_1.default)(settings.collectionIds);
+                    yield pluginStore.set({
+                        key: 'collectionIdMap',
+                        value: collectionIdMap,
                     });
                     return true;
                 }

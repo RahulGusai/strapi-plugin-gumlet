@@ -9,7 +9,7 @@ const settings_routes_1 = __importDefault(require("./settings-routes"));
 const routes = {
     // routes for the admin panel (/strapi-uploader-plugin/api-video-asset/...)
     admin: {
-        type: "admin",
+        type: 'admin',
         routes: admin_routes_1.default,
     },
     // routes for the plugin settings panel (/strapi-uploader-plugin/settings)
@@ -17,8 +17,8 @@ const routes = {
         routes: settings_routes_1.default,
     },
     // routes for the content api (/api/strapi-uploader-plugin/...)
-    "content-api": {
-        type: "content-api",
+    'content-api': {
+        type: 'content-api',
         routes: content_api_routes_1.default,
     },
 };

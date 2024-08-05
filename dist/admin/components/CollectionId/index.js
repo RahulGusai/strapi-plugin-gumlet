@@ -41,9 +41,10 @@ const settings_1 = __importDefault(require("../../api/settings"));
 const Field_1 = require("@strapi/design-system/Field");
 const Stack_1 = require("@strapi/design-system/Stack");
 const styled_components_1 = __importDefault(require("styled-components"));
+const collectionId_1 = __importDefault(require("../../utils/collectionId"));
 const CollectionId = ({ name, description, required, selectedValue, onChange, }) => {
     const [selected, setSelected] = (0, react_1.useState)(selectedValue);
-    const [collectionIds, setCollectionIds] = (0, react_1.useState)([]);
+    const [collectionIdMap, setCollectionIdMap] = (0, react_1.useState)({});
     const handleSelectChange = (value) => {
         setSelected(value);
         onChange(value);
@@ -51,8 +52,13 @@ const CollectionId = ({ name, description, required, selectedValue, onChange, })
     (0, react_1.useEffect)(() => {
         const fetchCollectionIds = () => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const { collectionIds } = yield settings_1.default.get();
-                setCollectionIds(collectionIds);
+                const { collectionIds, collectionIdMap } = yield settings_1.default.get();
+                if (collectionIdMap) {
+                    setCollectionIdMap(collectionIdMap);
+                }
+                else {
+                    setCollectionIdMap(yield (0, collectionId_1.default)(collectionIds));
+                }
             }
             catch (error) {
                 console.error('Failed to fetch collection IDs:', error);
@@ -69,6 +75,6 @@ const CollectionId = ({ name, description, required, selectedValue, onChange, })
     return (react_1.default.createElement(Field_1.Field, { name: name, hint: description },
         react_1.default.createElement(Stack_1.Stack, null,
             react_1.default.createElement(FieldLabelStyled, { required: required }, description),
-            react_1.default.createElement(design_system_1.Select, { placeholder: "Choose a value", value: selected, onChange: handleSelectChange }, collectionIds.map((collectionId) => (react_1.default.createElement(design_system_1.Option, { key: collectionId, value: collectionId }, collectionId)))))));
+            react_1.default.createElement(design_system_1.Select, { placeholder: "Choose a value", value: selected, onChange: handleSelectChange }, Object.keys(collectionIdMap).map((collectionName) => (react_1.default.createElement(design_system_1.Option, { key: collectionIdMap[collectionName], value: collectionIdMap[collectionName] }, collectionName)))))));
 };
 exports.default = CollectionId;

@@ -22,6 +22,7 @@ export interface CustomSettings {
   defaultPublic: boolean;
   videoFormat: string;
   collectionIds: string[];
+  collectionIdMap?: { [key: string]: string };
 }
 
 export interface InputData {

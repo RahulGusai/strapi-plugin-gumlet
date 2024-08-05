@@ -17,16 +17,18 @@ import CollectionId from '../../CollectionId';
 import { Stack } from '@strapi/design-system/Stack';
 import styled from 'styled-components';
 import { FieldLabel, FieldInput } from '@strapi/design-system/Field';
-import { Dropbox } from 'dropbox';
+import DropboxView from '../DropboxView/DropboxView';
 
 interface IAddVideoModalProps {
   close: () => void;
   update: () => void;
+  dropboxAccessToken?: string;
 }
 
 const AddVideoModal: FC<IAddVideoModalProps> = ({
   update,
   close,
+  dropboxAccessToken,
 }): JSX.Element => {
   const [inputData, setInputData] = useState<InputData>({
     title: '',
@@ -46,6 +48,10 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
   const [uploadMethod, setUploadMethod] = useState<
     'file' | 'url' | 'dropbox' | undefined
   >(undefined);
+  const [dropboxFilePaths, setDropboxFilePaths] = useState<string[]>([]);
+  const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>(
+    undefined
+  );
 
   // CONSTANTS
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -53,11 +59,12 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
   const { title, description, tags, metadata, collectionId, videoURL } =
     inputData;
 
-  // useEffect(() => {
-  //   if (dropboxAccessToken != undefined) {
-  //     setUploadMethod('dropbox');
-  //   }
-  // }, [dropboxAccessToken]);
+  useEffect(() => {
+    if (dropboxAccessToken) {
+      setUploadMethod('dropbox');
+      fetchDropboxFiles(dropboxAccessToken);
+    }
+  }, [dropboxAccessToken]);
 
   const displayVideoFrame = (
     video: HTMLVideoElement,
@@ -108,6 +115,9 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
       inputData?.metadata && inputData?.metadata.filter((m) => m !== metadata);
     setInputData({ ...inputData, metadata: newMetadata });
   };
+  const handleRadioChange = (filePath: string) => {
+    setSelectedFilePath(filePath);
+  };
 
   const onFileSelected = (file: File) => {
     console.log(file, 'file');
@@ -136,18 +146,12 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
 
     const files = await dbx.filesListFolder({ path: '' });
 
-    const videos = files.result.entries.filter(
-      (file) => file['.tag'] === 'file'
-    );
-
-    return videos.map((video) => {
-      return video.path_lower;
-    });
-    // for (const video of videos) {
-    //   const response = await dbx.filesGetTemporaryLink({
-    //     path: video.path_lower,
-    //   });
-    // }
+    const filePaths = files.result.entries
+      .filter((file) => file['.tag'] === 'file')
+      .map((video) => {
+        return video.path_lower;
+      });
+    setDropboxFilePaths(filePaths);
   };
 
   const renderUploadMethod = () => {
@@ -174,10 +178,23 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         </Wrapper>
       );
     } else if (uploadMethod === 'dropbox') {
-      connectToDropbox();
-      // <Wrapper>
-      //   <Typography>Connecting to Gumlet...</Typography>
-      // </Wrapper>;
+      if (dropboxAccessToken) {
+        return (
+          <DropboxView
+            setUploadMethod={setUploadMethod}
+            handleRadioChange={handleRadioChange}
+            dropboxFilePaths={dropboxFilePaths}
+            selectedFilePath={selectedFilePath}
+          ></DropboxView>
+        );
+      } else {
+        connectToDropbox();
+        return (
+          <Wrapper>
+            <Typography>Connecting to Dropbox...</Typography>
+          </Wrapper>
+        );
+      }
     } else {
       return (
         <Wrapper>
@@ -261,6 +278,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
           <>
             <UploadButton
               uploadMethod={uploadMethod}
+              dropboxAccessToken={dropboxAccessToken}
               currentFile={file}
               title={title}
               description={description}
@@ -268,6 +286,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
               metadata={metadata || []}
               collectionId={collectionId}
               videoURL={videoURL}
+              selectedFilePath={selectedFilePath}
               update={update}
               close={close}
             />
@@ -289,6 +308,22 @@ const Wrapper = styled.div`
   cursor: pointer;
   transition: border 0.4s ease-in-out;
   margin-bottom: 20px;
+
+  &:hover {
+    border: 1px dashed #4642eb;
+  }
+`;
+
+const DropboxWrapper = styled.div`
+  width: 100%;
+  height: 300px;
+  border: 1px dashed #eaeaea;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: border 0.4s ease-in-out;
+  margin-bottom: 20px;
+  padding: 10px;
 
   &:hover {
     border: 1px dashed #4642eb;
