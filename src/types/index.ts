@@ -20,6 +20,7 @@ export interface CustomAssets {
 export interface CustomSettings {
   apiKey: string;
   defaultPublic: boolean;
+  videoFormat: string;
   collectionIds: string[];
 }
 
@@ -32,6 +33,7 @@ export interface InputData {
     value: string;
   }[];
   collectionId?: string;
+  videoURL?: string;
 }
 
 export interface InputDataMetadata {

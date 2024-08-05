@@ -59,6 +59,8 @@ const HomePage = () => {
     const [isConfigurated, setIsConfigurated] = (0, react_1.useState)(false);
     const [assets, setAssets] = (0, react_1.useState)([]);
     const [search, setSearch] = (0, react_1.useState)('');
+    const [isVisible, setIsVisible] = (0, react_1.useState)(false);
+    const [dropboxAccessToken, setDropboxAccessToken] = (0, react_1.useState)(undefined);
     const permissions = (0, react_1.useMemo)(() => {
         return {
             read: permissions_1.default.mainRead,
@@ -91,6 +93,28 @@ const HomePage = () => {
     (0, react_1.useEffect)(() => {
         getApiKey();
     }, []);
+    (0, react_1.useEffect)(() => {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+            setDropboxAccessToken(setDropboxAccessToken);
+            setIsVisible(true);
+        }
+        else {
+            console.log('No access token found in the URL.');
+        }
+    }, []);
+    const fetchDropboxFiles = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
+        var Dropbox = require('dropbox').Dropbox;
+        var dbx = new Dropbox({ accessToken });
+        const files = yield dbx.filesListFolder({ path: '' });
+        const videos = files.result.entries.filter((file) => file['.tag'] === 'file');
+        const response = yield dbx.filesGetTemporaryLink({
+            path: videos[0].path_lower,
+        });
+        console.log(response);
+    });
     const handleSearch = (value) => {
         setSearch(value);
     };
@@ -109,3 +133,6 @@ const HomePage = () => {
 };
 exports.default = () => (react_1.default.createElement(helper_plugin_2.CheckPagePermissions, { permissions: permissions_1.default.mainRead },
     react_1.default.createElement(HomePage, null)));
+//TODO Whenever connect to dropbox is clicked, check if access token is present or not. If yes then connect to dropbox using that token otherwise,
+// Connect to dropbox auth to login the user and obbtain access token
+//Once token is there, fetch all the files from the account and display in Add video modal

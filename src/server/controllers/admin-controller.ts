@@ -8,6 +8,22 @@ import {
 } from '../../admin/actions';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
+  async createVideoAsset(ctx: any) {
+    console.log('Create video asset controller');
+    try {
+      if (!isAllowedTo(strapi, ctx, mainCreateAction)) {
+        return ctx.forbidden();
+      }
+
+      return await strapi
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
+        .createVideoAsset(ctx.request.body);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+
   async createVideoId(ctx: any) {
     console.log('Create video id controller');
     try {
@@ -23,6 +39,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.throw(500, err);
     }
   },
+
   async create(ctx: any) {
     console.log('Create video controller');
 
@@ -53,6 +70,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.throw(500, err);
     }
   },
+
+  async getVideoDetail(ctx: any) {
+    try {
+      if (!isAllowedTo(strapi, ctx, mainReadAction)) {
+        return ctx.forbidden();
+      }
+
+      ctx.body = await strapi
+        .plugin('strapi-uploader-plugin')
+        .service('api-video-asset')
+        .getVideoDetail(ctx.params.videoId);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+
   async update(ctx: any) {
     try {
       if (!isAllowedTo(strapi, ctx, mainUpdateAction)) {

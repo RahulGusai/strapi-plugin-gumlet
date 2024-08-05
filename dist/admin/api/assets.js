@@ -20,6 +20,17 @@ const assetsRequests = {
             method: 'GET',
         });
     }),
+    getVideoDetail: (videoId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield (0, helper_plugin_1.request)(`/${pluginId_1.default}/api-video-asset/${videoId}`, {
+            method: 'GET',
+        });
+    }),
+    createVideoAsset: (body) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield (0, helper_plugin_1.request)(`/${pluginId_1.default}/api-video-asset/create/asset`, {
+            method: 'POST',
+            body,
+        });
+    }),
     createVideoId: (body) => __awaiter(void 0, void 0, void 0, function* () {
         return yield (0, helper_plugin_1.request)(`/${pluginId_1.default}/api-video-asset/create`, {
             method: 'POST',

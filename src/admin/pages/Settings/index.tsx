@@ -18,11 +18,13 @@ import settingsRequests from '../../api/settings';
 import FieldComp from '../../components/FieldComp/Fields';
 import pluginPermissions from '../../permissions';
 import MultiStringInput from '../../components/MultiStringInput';
+import { Select, Option } from '@strapi/design-system/Select';
 
 const Settings = () => {
   const [settings, setSettings] = useState<CustomSettings>({
     apiKey: '',
     defaultPublic: true,
+    videoFormat: 'MP4',
     collectionIds: [],
   });
 
@@ -49,6 +51,10 @@ const Settings = () => {
         collectionIds: collectionIds,
       };
     });
+  };
+
+  const updateVideoFormat = (value: string) => {
+    setSettings({ ...settings, videoFormat: value });
   };
 
   const handleOnSubmit = async () => {
@@ -112,6 +118,17 @@ const Settings = () => {
                   isPassword
                   onChange={handleChange}
                 />
+              </GridItem>
+              <GridItem col={12} s={12}>
+                <Select
+                  id="dropdownOption"
+                  label="Select the video format"
+                  value={settings.videoFormat}
+                  onChange={updateVideoFormat}
+                >
+                  <Option value="MP4">MP4</Option>
+                  <Option value="ABP">ABP</Option>
+                </Select>
               </GridItem>
               <GridItem col={12} s={12}>
                 <MultiStringInput

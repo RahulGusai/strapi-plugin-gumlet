@@ -26,12 +26,16 @@ const getConfig = () => __awaiter(void 0, void 0, void 0, function* () {
     const configKey = yield pluginStore.get({
         key: 'apiKey',
     });
+    const videoFormat = yield pluginStore.get({
+        key: 'videoFormat',
+    });
     const collectionIds = yield pluginStore.get({
         key: 'collectionIds',
     });
     const res = {
         apiKey: configKey,
         defaultPublic: defaultPublic !== null && defaultPublic !== void 0 ? defaultPublic : true,
+        videoFormat: videoFormat !== null && videoFormat !== void 0 ? videoFormat : 'MP4',
         collectionIds: collectionIds !== null && collectionIds !== void 0 ? collectionIds : [],
     };
     return res;

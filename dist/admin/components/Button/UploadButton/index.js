@@ -41,14 +41,19 @@ const Button_1 = require("@strapi/design-system/Button");
 const helper_plugin_1 = require("@strapi/helper-plugin");
 const CloudUpload_1 = __importDefault(require("@strapi/icons/CloudUpload"));
 const axios_1 = __importDefault(require("axios"));
-const UploadButton = ({ currentFile, title, description, tags, metadata, collectionId, update, close, }) => {
+const UploadButton = ({ uploadMethod, currentFile, title, description, tags, metadata, collectionId, videoURL, update, close, }) => {
     const [progress, setProgress] = (0, react_1.useState)(0);
     const [isUploading, setIsUploading] = (0, react_1.useState)(false);
     const notification = (0, helper_plugin_1.useNotification)();
-    const uploadIsDisabled = currentFile === undefined ||
+    let uploadIsDisabled = uploadMethod === undefined ||
         title.trim().length < 1 ||
         description.trim().length < 1 ||
         collectionId.length == 0;
+    if (uploadMethod == 'file')
+        uploadIsDisabled = uploadIsDisabled || currentFile === undefined;
+    if (uploadMethod === 'url')
+        uploadIsDisabled =
+            uploadIsDisabled || videoURL === undefined || videoURL.length == 0;
     const fileInputChange = () => __awaiter(void 0, void 0, void 0, function* () {
         const body = {
             title: title,
@@ -57,46 +62,54 @@ const UploadButton = ({ currentFile, title, description, tags, metadata, collect
             metadata: metadata,
             collectionId: collectionId,
         };
-        if (currentFile) {
-            const { uploadUrl, assetId, thumbnail, playbackUrl } = yield assets_1.default.createVideoId(body);
-            setIsUploading(true);
-            try {
-                console.log(`Uploading the video to the gumlet's URL`);
-                yield axios_1.default.put(uploadUrl, currentFile, {
-                    headers: {
-                        'Content-Type': currentFile.type,
-                    },
-                    onUploadProgress: (progressEvent) => {
-                        const { loaded, total } = progressEvent;
-                        setProgress(Math.round((loaded * 100) / total));
-                    },
-                });
-                console.log('Video successfully uploaded on the Gumlet.');
-                const body = {
-                    title: title,
-                    description: description,
-                    videoId: assetId,
-                    playbackUrl: playbackUrl,
-                    thumbnail: thumbnail,
-                    tags: tags,
-                    metadata: metadata,
-                };
-                const assetData = yield assets_1.default.create(body);
-                if (assetData) {
-                    setIsUploading(false);
-                    update();
-                }
-                else {
-                    notification({
-                        type: 'warning',
-                        message: 'Error while creating video',
-                    });
-                }
-            }
-            catch (e) {
-                console.error(e);
-            }
-            close();
+        if (uploadMethod == 'file') {
+            uploadViaFile(body, currentFile);
+        }
+        if (uploadMethod == 'url') {
+            uploadViaURL(body, videoURL);
+        }
+    });
+    const uploadViaFile = (body, currentFile) => __awaiter(void 0, void 0, void 0, function* () {
+        const { uploadUrl, assetId, thumbnail, playbackUrl } = yield assets_1.default.createVideoId(body);
+        setIsUploading(true);
+        try {
+            console.log(`Uploading the video to the gumlet's URL`);
+            yield axios_1.default.put(uploadUrl, currentFile, {
+                headers: {
+                    'Content-Type': currentFile.type,
+                },
+                onUploadProgress: (progressEvent) => __awaiter(void 0, void 0, void 0, function* () {
+                    const { loaded, total } = progressEvent;
+                    const percentageCompleted = Math.round((loaded * 100) / total);
+                    setProgress(percentageCompleted);
+                }),
+            });
+            console.log('Video successfully uploaded on the Gumlet.');
+            const strapiAssetData = Object.assign(Object.assign({}, body), { videoId: assetId, playbackUrl: playbackUrl, thumbnail: thumbnail });
+            createStrapiAsset(strapiAssetData);
+        }
+        catch (e) {
+            console.error(e);
+        }
+        close();
+    });
+    const uploadViaURL = (body, videoURL) => __awaiter(void 0, void 0, void 0, function* () {
+        const { assetId, thumbnail, playbackUrl } = yield assets_1.default.createVideoAsset(Object.assign(Object.assign({}, body), { videoURL: videoURL }));
+        const strapiAssetData = Object.assign(Object.assign({}, body), { videoId: assetId, playbackUrl: playbackUrl, thumbnail: thumbnail });
+        createStrapiAsset(strapiAssetData);
+        close();
+    });
+    const createStrapiAsset = (strapiAssetData) => __awaiter(void 0, void 0, void 0, function* () {
+        const assetData = yield assets_1.default.create(strapiAssetData);
+        if (assetData) {
+            setIsUploading(false);
+            update();
+        }
+        else {
+            notification({
+                type: 'warning',
+                message: 'Error while creating video',
+            });
         }
     });
     return (react_1.default.createElement(Button_1.Button, { endIcon: react_1.default.createElement(CloudUpload_1.default, null), loading: isUploading, onClick: fileInputChange, disabled: uploadIsDisabled }, isUploading ? `Uploading ${progress}%` : `Upload`));

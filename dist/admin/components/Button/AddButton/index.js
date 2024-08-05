@@ -34,6 +34,6 @@ const AddButton = ({ update }) => {
     const [isVisible, setIsVisible] = (0, react_1.useState)(false);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(Button_1.Button, { endIcon: react_1.default.createElement(Plus_1.default, null), onClick: () => setIsVisible(true) }, "Add a video"),
-        isVisible && react_1.default.createElement(AddVideo_1.default, { update: update, close: () => setIsVisible(false) })));
+        isVisible && (react_1.default.createElement(AddVideo_1.default, { update: update, close: () => setIsVisible(false) }))));
 };
 exports.default = AddButton;

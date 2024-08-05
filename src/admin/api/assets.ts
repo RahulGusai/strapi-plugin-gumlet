@@ -1,5 +1,4 @@
 import { request } from '@strapi/helper-plugin';
-import { InputData } from '../../types';
 import pluginId from '../pluginId';
 
 const assetsRequests = {
@@ -8,12 +7,25 @@ const assetsRequests = {
       method: 'GET',
     });
   },
+
+  getVideoDetail: async (videoId: string) => {
+    return await request(`/${pluginId}/api-video-asset/${videoId}`, {
+      method: 'GET',
+    });
+  },
+  createVideoAsset: async (body: Object) => {
+    return await request(`/${pluginId}/api-video-asset/create/asset`, {
+      method: 'POST',
+      body,
+    });
+  },
   createVideoId: async (body: Object) => {
     return await request(`/${pluginId}/api-video-asset/create`, {
       method: 'POST',
       body,
     });
   },
+
   create: async (body: Object) => {
     return await request(`/${pluginId}/api-video-asset`, {
       method: 'POST',

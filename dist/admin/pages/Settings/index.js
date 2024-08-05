@@ -48,10 +48,12 @@ const settings_1 = __importDefault(require("../../api/settings"));
 const Fields_1 = __importDefault(require("../../components/FieldComp/Fields"));
 const permissions_1 = __importDefault(require("../../permissions"));
 const MultiStringInput_1 = __importDefault(require("../../components/MultiStringInput"));
+const Select_1 = require("@strapi/design-system/Select");
 const Settings = () => {
     const [settings, setSettings] = (0, react_1.useState)({
         apiKey: '',
         defaultPublic: true,
+        videoFormat: 'MP4',
         collectionIds: [],
     });
     const { lockApp, unlockApp } = (0, helper_plugin_1.useOverlayBlocker)();
@@ -70,6 +72,9 @@ const Settings = () => {
         setSettings((settings) => {
             return Object.assign(Object.assign({}, settings), { collectionIds: collectionIds });
         });
+    };
+    const updateVideoFormat = (value) => {
+        setSettings(Object.assign(Object.assign({}, settings), { videoFormat: value }));
     };
     const handleOnSubmit = () => __awaiter(void 0, void 0, void 0, function* () {
         lockApp();
@@ -97,6 +102,10 @@ const Settings = () => {
                     react_1.default.createElement(Grid_1.Grid, { gap: 6 },
                         react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
                             react_1.default.createElement(Fields_1.default, { name: "API Key", label: "API Key", value: settings.apiKey, placeholder: "Enter your API Key", description: "Generated in the Gumlet's dashboard and used for authenticating API calls.", detailsLink: "https://dashboard.gumlet.com/", isPassword: true, onChange: handleChange })),
+                        react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
+                            react_1.default.createElement(Select_1.Select, { id: "dropdownOption", label: "Select the video format", value: settings.videoFormat, onChange: updateVideoFormat },
+                                react_1.default.createElement(Select_1.Option, { value: "MP4" }, "MP4"),
+                                react_1.default.createElement(Select_1.Option, { value: "ABP" }, "ABP"))),
                         react_1.default.createElement(Grid_1.GridItem, { col: 12, s: 12 },
                             react_1.default.createElement(MultiStringInput_1.default, { values: settings.collectionIds, onChange: updateCollectionIds }))))))));
 };

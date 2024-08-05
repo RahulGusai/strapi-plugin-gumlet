@@ -22,6 +22,7 @@ import SetupNeeded from '../../components/SetupNeeded';
 import VideoView from '../../components/Videos';
 import { GridBroadcast } from '../../components/Videos/styles';
 import pluginPermissions from '../../permissions';
+import AddVideoModal from '../../components/Modal/AddVideo';
 
 const HomePage = () => {
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -29,6 +30,8 @@ const HomePage = () => {
   const [isConfigurated, setIsConfigurated] = useState(false);
   const [assets, setAssets] = useState<CustomVideo[]>([]);
   const [search, setSearch] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
+  const [dropboxAccessToken, setDropboxAccessToken] = useState(undefined);
 
   const permissions = useMemo(() => {
     return {
@@ -79,6 +82,34 @@ const HomePage = () => {
     getApiKey();
   }, []);
 
+  useEffect(() => {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+
+    if (accessToken) {
+      setDropboxAccessToken(setDropboxAccessToken);
+      setIsVisible(true);
+    } else {
+      console.log('No access token found in the URL.');
+    }
+  }, []);
+
+  const fetchDropboxFiles = async (accessToken) => {
+    var Dropbox = require('dropbox').Dropbox;
+    var dbx = new Dropbox({ accessToken });
+
+    const files = await dbx.filesListFolder({ path: '' });
+
+    const videos = files.result.entries.filter(
+      (file) => file['.tag'] === 'file'
+    );
+    const response = await dbx.filesGetTemporaryLink({
+      path: videos[0].path_lower,
+    });
+    console.log(response);
+  };
+
   const handleSearch = (value: string) => {
     setSearch(value);
   };
@@ -95,6 +126,7 @@ const HomePage = () => {
           isConfigurated && canCreate && <AddButton update={fetchData} />
         }
       />
+
       {isConfigurated ? (
         !isLoadingData && assets?.length > 0 ? (
           <ContentLayout>
@@ -135,3 +167,7 @@ export default () => (
     <HomePage />
   </CheckPagePermissions>
 );
+
+//TODO Whenever connect to dropbox is clicked, check if access token is present or not. If yes then connect to dropbox using that token otherwise,
+// Connect to dropbox auth to login the user and obbtain access token
+//Once token is there, fetch all the files from the account and display in Add video modal

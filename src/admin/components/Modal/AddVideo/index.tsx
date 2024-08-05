@@ -14,6 +14,10 @@ import Tags from '../../Tags';
 import { InputData } from '../../../../types';
 import MetadataTable from '../../Metadata';
 import CollectionId from '../../CollectionId';
+import { Stack } from '@strapi/design-system/Stack';
+import styled from 'styled-components';
+import { FieldLabel, FieldInput } from '@strapi/design-system/Field';
+import { Dropbox } from 'dropbox';
 
 interface IAddVideoModalProps {
   close: () => void;
@@ -39,11 +43,21 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
 
   const [file, setFile] = useState<File | undefined>();
   const [initialState, setInitialState] = useState<number>(0);
+  const [uploadMethod, setUploadMethod] = useState<
+    'file' | 'url' | 'dropbox' | undefined
+  >(undefined);
 
   // CONSTANTS
   const videoRef = useRef<HTMLVideoElement>(null);
   const sourceRef = useRef<HTMLSourceElement>(null);
-  const { title, description, tags, metadata, collectionId } = inputData;
+  const { title, description, tags, metadata, collectionId, videoURL } =
+    inputData;
+
+  // useEffect(() => {
+  //   if (dropboxAccessToken != undefined) {
+  //     setUploadMethod('dropbox');
+  //   }
+  // }, [dropboxAccessToken]);
 
   const displayVideoFrame = (
     video: HTMLVideoElement,
@@ -63,6 +77,10 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
 
   const updateCollectionId = (collectionId: string) => {
     setInputData({ ...inputData, collectionId: collectionId });
+  };
+
+  const updateVideoURL = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputData({ ...inputData, videoURL: event.target.value });
   };
 
   const handleSetTag = (tag: string) => {
@@ -104,6 +122,83 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
     if (videoRef.current && sourceRef.current)
       displayVideoFrame(videoRef.current, sourceRef.current, file);
   };
+  const connectToDropbox = () => {
+    const clientId = 'xzz26raqipbnvup';
+    const redirectUri =
+      'http://localhost:1337/admin/plugins/strapi-uploader-plugin';
+    const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
+    window.location.href = authUrl;
+  };
+
+  const fetchDropboxFiles = async (accessToken) => {
+    var Dropbox = require('dropbox').Dropbox;
+    var dbx = new Dropbox({ accessToken });
+
+    const files = await dbx.filesListFolder({ path: '' });
+
+    const videos = files.result.entries.filter(
+      (file) => file['.tag'] === 'file'
+    );
+
+    return videos.map((video) => {
+      return video.path_lower;
+    });
+    // for (const video of videos) {
+    //   const response = await dbx.filesGetTemporaryLink({
+    //     path: video.path_lower,
+    //   });
+    // }
+  };
+
+  const renderUploadMethod = () => {
+    if (uploadMethod === 'file') {
+      return (
+        <ImportZone
+          initialState={initialState}
+          onFileSelected={onFileSelected}
+          videoRef={videoRef}
+          sourceRef={sourceRef}
+        />
+      );
+    } else if (uploadMethod === 'url') {
+      return (
+        <Wrapper>
+          <Stack>
+            <FieldLabelStyled required={true}>Video URL</FieldLabelStyled>
+            <FieldInput
+              placeholder="Enter URL to import a file"
+              type="text"
+              onChange={updateVideoURL}
+            />
+          </Stack>
+        </Wrapper>
+      );
+    } else if (uploadMethod === 'dropbox') {
+      connectToDropbox();
+      // <Wrapper>
+      //   <Typography>Connecting to Gumlet...</Typography>
+      // </Wrapper>;
+    } else {
+      return (
+        <Wrapper>
+          <Stack size={4}>
+            <Button variant="primary" onClick={() => setUploadMethod('file')}>
+              Upload via File
+            </Button>
+            <Button variant="secondary" onClick={() => setUploadMethod('url')}>
+              Upload via URL
+            </Button>
+            <Button
+              variant="tertiary"
+              onClick={() => setUploadMethod('dropbox')}
+            >
+              Upload via Dropbox
+            </Button>
+          </Stack>
+        </Wrapper>
+      );
+    }
+  };
 
   return (
     <ModalLayout onClose={close} labelledBy="title">
@@ -113,12 +208,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         </Typography>
       </ModalHeader>
       <ModalBody>
-        <ImportZone
-          initialState={initialState}
-          onFileSelected={onFileSelected}
-          videoRef={videoRef}
-          sourceRef={sourceRef}
-        />
+        {renderUploadMethod()}
         <FieldComp
           name="title"
           label="Title"
@@ -170,12 +260,14 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         endActions={
           <>
             <UploadButton
+              uploadMethod={uploadMethod}
               currentFile={file}
               title={title}
               description={description}
               tags={tags || []}
               metadata={metadata || []}
               collectionId={collectionId}
+              videoURL={videoURL}
               update={update}
               close={close}
             />
@@ -185,5 +277,29 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
     </ModalLayout>
   );
 };
+
+const Wrapper = styled.div`
+  width: 100%;
+  height: 300px;
+  border: 1px dashed #eaeaea;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border 0.4s ease-in-out;
+  margin-bottom: 20px;
+
+  &:hover {
+    border: 1px dashed #4642eb;
+  }
+`;
+
+const FieldLabelStyled = styled(FieldLabel)`
+  width: 100%;
+  & > div {
+    width: max-content;
+  }
+`;
 
 export default AddVideoModal;

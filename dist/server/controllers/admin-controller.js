@@ -12,6 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = require(".");
 const actions_1 = require("../../admin/actions");
 exports.default = ({ strapi }) => ({
+    createVideoAsset(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('Create video asset controller');
+            try {
+                if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainCreateAction)) {
+                    return ctx.forbidden();
+                }
+                return yield strapi
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
+                    .createVideoAsset(ctx.request.body);
+            }
+            catch (err) {
+                ctx.throw(500, err);
+            }
+        });
+    },
     createVideoId(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('Create video id controller');
@@ -56,6 +73,22 @@ exports.default = ({ strapi }) => ({
                     .plugin('strapi-uploader-plugin')
                     .service('api-video-asset')
                     .findAll(ctx.request.body);
+            }
+            catch (err) {
+                ctx.throw(500, err);
+            }
+        });
+    },
+    getVideoDetail(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!(0, _1.isAllowedTo)(strapi, ctx, actions_1.mainReadAction)) {
+                    return ctx.forbidden();
+                }
+                ctx.body = yield strapi
+                    .plugin('strapi-uploader-plugin')
+                    .service('api-video-asset')
+                    .getVideoDetail(ctx.params.videoId);
             }
             catch (err) {
                 ctx.throw(500, err);

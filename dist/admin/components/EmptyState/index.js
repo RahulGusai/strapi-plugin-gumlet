@@ -37,6 +37,6 @@ const EmptyState = ({ update }) => {
     const [isVisible, setIsVisible] = (0, react_1.useState)(false);
     return (react_1.default.createElement(Box_1.Box, { padding: 10, background: "neutral100" },
         react_1.default.createElement(EmptyStateLayout_1.EmptyStateLayout, { icon: react_1.default.createElement(Illo_1.Illo, null), content: "You don't have any videos yet", action: react_1.default.createElement(Button_1.Button, { variant: "secondary", startIcon: react_1.default.createElement(Plus_1.default, null), onClick: () => setIsVisible(true) }, "Add your first videos") }),
-        isVisible && react_1.default.createElement(AddVideo_1.default, { update: update, close: () => setIsVisible(false) })));
+        isVisible && (react_1.default.createElement(AddVideo_1.default, { update: update, close: () => setIsVisible(false) }))));
 };
 exports.default = EmptyState;

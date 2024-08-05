@@ -18,6 +18,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       key: 'apiKey',
     });
 
+    const videoFormat = await pluginStore.get({
+      key: 'videoFormat',
+    });
+
     const collectionIds = await pluginStore.get({
       key: 'collectionIds',
     });
@@ -25,6 +29,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const res: CustomSettings = {
       apiKey: configKey as string,
       defaultPublic: (defaultPublic ?? true) as boolean,
+      videoFormat: (videoFormat ?? 'MP4') as string,
       collectionIds: (collectionIds ?? []) as string[],
     };
     return res;
@@ -48,6 +53,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         await pluginStore.set({
           key: 'defaultPublic',
           value: settings.defaultPublic,
+        });
+
+        await pluginStore.set({
+          key: 'videoFormat',
+          value: settings.videoFormat,
         });
 
         await pluginStore.set({

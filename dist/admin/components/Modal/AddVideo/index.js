@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -36,6 +45,9 @@ const importZone_1 = __importDefault(require("./importZone"));
 const Tags_1 = __importDefault(require("../../Tags"));
 const Metadata_1 = __importDefault(require("../../Metadata"));
 const CollectionId_1 = __importDefault(require("../../CollectionId"));
+const Stack_1 = require("@strapi/design-system/Stack");
+const styled_components_1 = __importDefault(require("styled-components"));
+const Field_1 = require("@strapi/design-system/Field");
 const AddVideoModal = ({ update, close, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: '',
@@ -51,10 +63,16 @@ const AddVideoModal = ({ update, close, }) => {
     });
     const [file, setFile] = (0, react_1.useState)();
     const [initialState, setInitialState] = (0, react_1.useState)(0);
+    const [uploadMethod, setUploadMethod] = (0, react_1.useState)(undefined);
     // CONSTANTS
     const videoRef = (0, react_1.useRef)(null);
     const sourceRef = (0, react_1.useRef)(null);
-    const { title, description, tags, metadata, collectionId } = inputData;
+    const { title, description, tags, metadata, collectionId, videoURL } = inputData;
+    // useEffect(() => {
+    //   if (dropboxAccessToken != undefined) {
+    //     setUploadMethod('dropbox');
+    //   }
+    // }, [dropboxAccessToken]);
     const displayVideoFrame = (video, source, file) => {
         // Object Url as the video source
         source.setAttribute('src', URL.createObjectURL(file));
@@ -67,6 +85,9 @@ const AddVideoModal = ({ update, close, }) => {
     };
     const updateCollectionId = (collectionId) => {
         setInputData(Object.assign(Object.assign({}, inputData), { collectionId: collectionId }));
+    };
+    const updateVideoURL = (event) => {
+        setInputData(Object.assign(Object.assign({}, inputData), { videoURL: event.target.value }));
     };
     const handleSetTag = (tag) => {
         if (tag) {
@@ -96,11 +117,55 @@ const AddVideoModal = ({ update, close, }) => {
         if (videoRef.current && sourceRef.current)
             displayVideoFrame(videoRef.current, sourceRef.current, file);
     };
+    const connectToDropbox = () => {
+        const clientId = 'xzz26raqipbnvup';
+        const redirectUri = 'http://localhost:1337/admin/plugins/strapi-uploader-plugin';
+        const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
+        window.location.href = authUrl;
+    };
+    const fetchDropboxFiles = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
+        var Dropbox = require('dropbox').Dropbox;
+        var dbx = new Dropbox({ accessToken });
+        const files = yield dbx.filesListFolder({ path: '' });
+        const videos = files.result.entries.filter((file) => file['.tag'] === 'file');
+        return videos.map((video) => {
+            return video.path_lower;
+        });
+        // for (const video of videos) {
+        //   const response = await dbx.filesGetTemporaryLink({
+        //     path: video.path_lower,
+        //   });
+        // }
+    });
+    const renderUploadMethod = () => {
+        if (uploadMethod === 'file') {
+            return (react_1.default.createElement(importZone_1.default, { initialState: initialState, onFileSelected: onFileSelected, videoRef: videoRef, sourceRef: sourceRef }));
+        }
+        else if (uploadMethod === 'url') {
+            return (react_1.default.createElement(Wrapper, null,
+                react_1.default.createElement(Stack_1.Stack, null,
+                    react_1.default.createElement(FieldLabelStyled, { required: true }, "Video URL"),
+                    react_1.default.createElement(Field_1.FieldInput, { placeholder: "Enter URL to import a file", type: "text", onChange: updateVideoURL }))));
+        }
+        else if (uploadMethod === 'dropbox') {
+            connectToDropbox();
+            // <Wrapper>
+            //   <Typography>Connecting to Gumlet...</Typography>
+            // </Wrapper>;
+        }
+        else {
+            return (react_1.default.createElement(Wrapper, null,
+                react_1.default.createElement(Stack_1.Stack, { size: 4 },
+                    react_1.default.createElement(Button_1.Button, { variant: "primary", onClick: () => setUploadMethod('file') }, "Upload via File"),
+                    react_1.default.createElement(Button_1.Button, { variant: "secondary", onClick: () => setUploadMethod('url') }, "Upload via URL"),
+                    react_1.default.createElement(Button_1.Button, { variant: "tertiary", onClick: () => setUploadMethod('dropbox') }, "Upload via Dropbox"))));
+        }
+    };
     return (react_1.default.createElement(ModalLayout_1.ModalLayout, { onClose: close, labelledBy: "title" },
         react_1.default.createElement(ModalLayout_1.ModalHeader, null,
             react_1.default.createElement(Typography_1.Typography, { fontWeight: "bold", textColor: "neutral800", as: "h2", id: "title" }, "Upload a video")),
         react_1.default.createElement(ModalLayout_1.ModalBody, null,
-            react_1.default.createElement(importZone_1.default, { initialState: initialState, onFileSelected: onFileSelected, videoRef: videoRef, sourceRef: sourceRef }),
+            renderUploadMethod(),
             react_1.default.createElement(Fields_1.default, { name: "title", label: "Title", value: title, placeholder: "Enter your title", onChange: handleChange, required: true }),
             react_1.default.createElement("br", null),
             react_1.default.createElement(Fields_1.default, { name: "description", label: "Description", value: description || '', placeholder: "Enter a description", onChange: handleChange, required: true }),
@@ -110,6 +175,28 @@ const AddVideoModal = ({ update, close, }) => {
             react_1.default.createElement(Tags_1.default, { handleSetTag: handleSetTag, handleRemoveTag: handleRemoveTag, tags: tags || [], editable: true }),
             react_1.default.createElement(Metadata_1.default, { metadata: metadata, handleSetMetadata: handleSetMetadata, handleRemoveMetadata: handleRemoveMetadata, editable: true })),
         react_1.default.createElement(ModalLayout_1.ModalFooter, { startActions: react_1.default.createElement(Button_1.Button, { onClick: close, variant: "tertiary" }, "Cancel"), endActions: react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(UploadButton_1.default, { currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, update: update, close: close })) })));
+                react_1.default.createElement(UploadButton_1.default, { uploadMethod: uploadMethod, currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, videoURL: videoURL, update: update, close: close })) })));
 };
+const Wrapper = styled_components_1.default.div `
+  width: 100%;
+  height: 300px;
+  border: 1px dashed #eaeaea;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border 0.4s ease-in-out;
+  margin-bottom: 20px;
+
+  &:hover {
+    border: 1px dashed #4642eb;
+  }
+`;
+const FieldLabelStyled = (0, styled_components_1.default)(Field_1.FieldLabel) `
+  width: 100%;
+  & > div {
+    width: max-content;
+  }
+`;
 exports.default = AddVideoModal;

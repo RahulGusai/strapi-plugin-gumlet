@@ -15,16 +15,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const strapi_1 = require("@strapi/strapi");
 const pluginId_1 = __importDefault(require("../../admin/pluginId"));
 const config_1 = require("../utils/config");
-const gumlet_1 = require("../constants/gumlet");
 const model = `plugin::${pluginId_1.default}.api-video-asset`;
 exports.default = strapi_1.factories.createCoreService(model, (params) => ({
+    createVideoAsset(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('Create video asset on Gumlet via URL.');
+            const client = yield (0, config_1.configGumletClient)();
+            const { videoFormat } = yield (0, config_1.getConfig)();
+            try {
+                const gumletResponse = yield client.post('/video/assets', {
+                    format: videoFormat,
+                    input: data['videoURL'],
+                    collection_id: data['collectionId'],
+                    title: data['title'],
+                    description: data['description'],
+                    tag: data['tags'],
+                });
+                const assetId = gumletResponse.data.asset_id;
+                const playbackUrl = gumletResponse.data.output.playback_url;
+                const thumbnail = gumletResponse.data.output.thumbnail_url[0];
+                console.log('Successfully created video asset on the Gumlet.');
+                return { assetId, thumbnail, playbackUrl };
+            }
+            catch (error) {
+                console.error('Error creating direct upload URL:', error);
+                throw error;
+            }
+        });
+    },
     createVideoId(data) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('Create direct upload URL endpoint on gumlet');
             const client = yield (0, config_1.configGumletClient)();
+            const { videoFormat } = yield (0, config_1.getConfig)();
             try {
                 const gumletResponse = yield client.post('/video/assets/upload', {
-                    format: gumlet_1.GUMLET_VIDEO_FORMAT,
+                    format: videoFormat,
                     collection_id: data['collectionId'],
                     title: data['title'],
                     description: data['description'],
@@ -39,6 +65,23 @@ exports.default = strapi_1.factories.createCoreService(model, (params) => ({
             }
             catch (error) {
                 console.error('Error creating direct upload URL:', error);
+                throw error;
+            }
+        });
+    },
+    getVideoDetail(videoId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log(videoId);
+                const client = yield (0, config_1.configGumletClient)();
+                const gumletResponse = yield client.get(`/video/assets/${videoId}`);
+                console.log('Response of gunlet API - ');
+                console.log(gumletResponse);
+                const duration = gumletResponse.data.input.duration;
+                return { duration };
+            }
+            catch (error) {
+                console.log('Error while fetching the details of the video form gumlet: ', error);
                 throw error;
             }
         });

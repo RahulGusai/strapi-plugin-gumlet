@@ -7,6 +7,16 @@ export default [
       policies: [],
     },
   },
+
+  {
+    method: 'GET',
+    path: '/api-video-asset/:videoId',
+    handler: 'admin.getVideoDetail',
+    config: {
+      policies: [],
+    },
+  },
+
   {
     method: 'POST',
     path: '/api-video-asset',
@@ -35,6 +45,14 @@ export default [
     method: 'POST',
     path: '/api-video-asset/create',
     handler: 'admin.createVideoId',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'POST',
+    path: '/api-video-asset/create/asset',
+    handler: 'admin.createVideoAsset',
     config: {
       policies: [],
     },

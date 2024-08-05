@@ -17,6 +17,10 @@ const getConfig = async () => {
     key: 'apiKey',
   });
 
+  const videoFormat = await pluginStore.get({
+    key: 'videoFormat',
+  });
+
   const collectionIds = await pluginStore.get({
     key: 'collectionIds',
   });
@@ -24,6 +28,7 @@ const getConfig = async () => {
   const res: CustomSettings = {
     apiKey: configKey,
     defaultPublic: defaultPublic ?? true,
+    videoFormat: videoFormat ?? 'MP4',
     collectionIds: collectionIds ?? [],
   };
   return res;
