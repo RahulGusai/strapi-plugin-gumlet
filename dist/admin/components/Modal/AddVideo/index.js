@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -48,8 +39,9 @@ const CollectionId_1 = __importDefault(require("../../CollectionId"));
 const Stack_1 = require("@strapi/design-system/Stack");
 const styled_components_1 = __importDefault(require("styled-components"));
 const Field_1 = require("@strapi/design-system/Field");
-const DropboxView_1 = __importDefault(require("../DropboxView/DropboxView"));
-const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
+const dropbox_1 = require("../../../constants/dropbox");
+const react_dropbox_chooser_1 = __importDefault(require("react-dropbox-chooser"));
+const AddVideoModal = ({ update, close, }) => {
     const [inputData, setInputData] = (0, react_1.useState)({
         title: '',
         description: '',
@@ -65,22 +57,13 @@ const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
     const [file, setFile] = (0, react_1.useState)();
     const [initialState, setInitialState] = (0, react_1.useState)(0);
     const [uploadMethod, setUploadMethod] = (0, react_1.useState)(undefined);
-    const [dropboxFilePaths, setDropboxFilePaths] = (0, react_1.useState)([]);
-    const [selectedFilePath, setSelectedFilePath] = (0, react_1.useState)(undefined);
+    const [dropboxFileLinks, setDropboxFileLinks] = (0, react_1.useState)([]);
     // CONSTANTS
     const videoRef = (0, react_1.useRef)(null);
     const sourceRef = (0, react_1.useRef)(null);
     const { title, description, tags, metadata, collectionId, videoURL } = inputData;
-    (0, react_1.useEffect)(() => {
-        if (dropboxAccessToken) {
-            setUploadMethod('dropbox');
-            fetchDropboxFiles(dropboxAccessToken);
-        }
-    }, [dropboxAccessToken]);
     const displayVideoFrame = (video, source, file) => {
-        // Object Url as the video source
         source.setAttribute('src', URL.createObjectURL(file));
-        // Load the video and show it
         video.load();
     };
     const handleChange = (event) => {
@@ -111,9 +94,6 @@ const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
         const newMetadata = (inputData === null || inputData === void 0 ? void 0 : inputData.metadata) && (inputData === null || inputData === void 0 ? void 0 : inputData.metadata.filter((m) => m !== metadata));
         setInputData(Object.assign(Object.assign({}, inputData), { metadata: newMetadata }));
     };
-    const handleRadioChange = (filePath) => {
-        setSelectedFilePath(filePath);
-    };
     const onFileSelected = (file) => {
         console.log(file, 'file');
         setFile(file);
@@ -124,23 +104,12 @@ const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
         if (videoRef.current && sourceRef.current)
             displayVideoFrame(videoRef.current, sourceRef.current, file);
     };
-    const connectToDropbox = () => {
-        const clientId = 'xzz26raqipbnvup';
-        const redirectUri = 'http://localhost:1337/admin/plugins/strapi-uploader-plugin';
-        const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
-        window.location.href = authUrl;
-    };
-    const fetchDropboxFiles = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
-        var Dropbox = require('dropbox').Dropbox;
-        var dbx = new Dropbox({ accessToken });
-        const files = yield dbx.filesListFolder({ path: '' });
-        const filePaths = files.result.entries
-            .filter((file) => file['.tag'] === 'file')
-            .map((video) => {
-            return video.path_lower;
-        });
-        setDropboxFilePaths(filePaths);
-    });
+    function handleDropboxFiles(files) {
+        setUploadMethod('dropbox');
+        setDropboxFileLinks(files.map((file) => {
+            return file.link;
+        }));
+    }
     const renderUploadMethod = () => {
         if (uploadMethod === 'file') {
             return (react_1.default.createElement(importZone_1.default, { initialState: initialState, onFileSelected: onFileSelected, videoRef: videoRef, sourceRef: sourceRef }));
@@ -152,21 +121,21 @@ const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
                     react_1.default.createElement(Field_1.FieldInput, { placeholder: "Enter URL to import a file", type: "text", onChange: updateVideoURL }))));
         }
         else if (uploadMethod === 'dropbox') {
-            if (dropboxAccessToken) {
-                return (react_1.default.createElement(DropboxView_1.default, { setUploadMethod: setUploadMethod, handleRadioChange: handleRadioChange, dropboxFilePaths: dropboxFilePaths, selectedFilePath: selectedFilePath }));
-            }
-            else {
-                connectToDropbox();
-                return (react_1.default.createElement(Wrapper, null,
-                    react_1.default.createElement(Typography_1.Typography, null, "Connecting to Dropbox...")));
-            }
+            return (react_1.default.createElement(Wrapper, null,
+                react_1.default.createElement(Stack_1.Stack, { spacing: 2 },
+                    react_1.default.createElement(Typography_1.Typography, null, `${dropboxFileLinks.length} ${dropboxFileLinks.length > 1 ? 'files' : 'file'} selected`))));
         }
         else {
             return (react_1.default.createElement(Wrapper, null,
                 react_1.default.createElement(Stack_1.Stack, { size: 4 },
-                    react_1.default.createElement(Button_1.Button, { variant: "primary", onClick: () => setUploadMethod('file') }, "Upload via File"),
-                    react_1.default.createElement(Button_1.Button, { variant: "secondary", onClick: () => setUploadMethod('url') }, "Upload via URL"),
-                    react_1.default.createElement(Button_1.Button, { variant: "tertiary", onClick: () => setUploadMethod('dropbox') }, "Upload via Dropbox"))));
+                    react_1.default.createElement(Button_1.Button, { variant: "primary", onClick: () => {
+                            setUploadMethod('file');
+                        } }, "Upload via File"),
+                    react_1.default.createElement(Button_1.Button, { variant: "primary", onClick: () => {
+                            setUploadMethod('url');
+                        } }, "Upload via URL"),
+                    react_1.default.createElement(react_dropbox_chooser_1.default, { appKey: dropbox_1.DROPBOX_CLIENT_ID, success: handleDropboxFiles, cancel: () => console.log('closed'), multiselect: true },
+                        react_1.default.createElement(Button_1.Button, { variant: "primary" }, "Upload via Dropbox")))));
         }
     };
     return (react_1.default.createElement(ModalLayout_1.ModalLayout, { onClose: close, labelledBy: "title" },
@@ -183,7 +152,7 @@ const AddVideoModal = ({ update, close, dropboxAccessToken, }) => {
             react_1.default.createElement(Tags_1.default, { handleSetTag: handleSetTag, handleRemoveTag: handleRemoveTag, tags: tags || [], editable: true }),
             react_1.default.createElement(Metadata_1.default, { metadata: metadata, handleSetMetadata: handleSetMetadata, handleRemoveMetadata: handleRemoveMetadata, editable: true })),
         react_1.default.createElement(ModalLayout_1.ModalFooter, { startActions: react_1.default.createElement(Button_1.Button, { onClick: close, variant: "tertiary" }, "Cancel"), endActions: react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(UploadButton_1.default, { uploadMethod: uploadMethod, dropboxAccessToken: dropboxAccessToken, currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, videoURL: videoURL, selectedFilePath: selectedFilePath, update: update, close: close })) })));
+                react_1.default.createElement(UploadButton_1.default, { uploadMethod: uploadMethod, currentFile: file, title: title, description: description, tags: tags || [], metadata: metadata || [], collectionId: collectionId, videoURL: videoURL, dropboxFileLinks: dropboxFileLinks, update: update, close: close })) })));
 };
 const Wrapper = styled_components_1.default.div `
   width: 100%;

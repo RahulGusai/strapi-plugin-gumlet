@@ -17,7 +17,11 @@
     "@strapi/helper-plugin": "^4.6.0",
     "@strapi/icons": "^1.6.3",
     "axios": "^1.7.2",
+    "install": "^0.13.0",
+    "npm": "^10.8.2",
     "prop-types": "^15.7.2",
+    "react-dropbox-chooser": "^0.0.5",
+    "react-helmet": "^6.1.0",
     "react-player": "^2.16.0"
   },
   "devDependencies": {

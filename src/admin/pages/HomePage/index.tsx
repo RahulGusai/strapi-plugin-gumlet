@@ -31,7 +31,6 @@ const HomePage = () => {
   const [assets, setAssets] = useState<CustomVideo[]>([]);
   const [search, setSearch] = useState('');
   const [isVisible, setIsVisible] = useState(false);
-  const [dropboxAccessToken, setDropboxAccessToken] = useState(undefined);
 
   const permissions = useMemo(() => {
     return {
@@ -82,19 +81,6 @@ const HomePage = () => {
     getApiKey();
   }, []);
 
-  useEffect(() => {
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const accessToken = params.get('access_token');
-
-    if (accessToken) {
-      setDropboxAccessToken(accessToken);
-      setIsVisible(true);
-    } else {
-      console.log('No access token found in the URL.');
-    }
-  }, []);
-
   const handleSearch = (value: string) => {
     setSearch(value);
   };
@@ -114,7 +100,6 @@ const HomePage = () => {
               isVisible={isVisible}
               setIsVisible={setIsVisible}
               update={fetchData}
-              dropboxAccessToken={dropboxAccessToken}
             />
           )
         }

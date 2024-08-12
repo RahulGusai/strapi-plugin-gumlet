@@ -41,10 +41,28 @@ const Initializer_1 = __importDefault(require("./components/Initializer"));
 const PluginIcon_1 = __importDefault(require("./components/PluginIcon"));
 const permissions_1 = __importDefault(require("./permissions"));
 const pluginId_1 = __importDefault(require("./pluginId"));
+const GumletVideoIcon_1 = __importDefault(require("./components/GumletVideoIcon"));
 const name = package_json_1.default.strapi.name;
 const displayName = package_json_1.default.strapi.displayName;
 exports.default = {
     register(app) {
+        app.customFields.register({
+            name: 'gumlet-video',
+            pluginId: 'strapi-uploader-plugin',
+            type: 'json',
+            icon: GumletVideoIcon_1.default,
+            intlLabel: {
+                id: 'gumlet-video.label',
+                defaultMessage: 'Gumlet Video',
+            },
+            intlDescription: {
+                id: 'gumlet-video.description',
+                defaultMessage: 'Select a Gumlet video asset to map its playback URL.',
+            },
+            components: {
+                Input: () => __awaiter(this, void 0, void 0, function* () { return Promise.resolve().then(() => __importStar(require('./components/GumletVideoField'))); }),
+            },
+        });
         app.addMenuLink({
             to: `/plugins/${pluginId_1.default}`,
             icon: PluginIcon_1.default,

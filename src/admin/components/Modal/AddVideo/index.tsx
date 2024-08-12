@@ -17,18 +17,17 @@ import CollectionId from '../../CollectionId';
 import { Stack } from '@strapi/design-system/Stack';
 import styled from 'styled-components';
 import { FieldLabel, FieldInput } from '@strapi/design-system/Field';
-import DropboxView from '../DropboxView/DropboxView';
+import { DROPBOX_CLIENT_ID } from '../../../constants/dropbox';
+import DropboxChooser from 'react-dropbox-chooser';
 
 interface IAddVideoModalProps {
   close: () => void;
   update: () => void;
-  dropboxAccessToken?: string;
 }
 
 const AddVideoModal: FC<IAddVideoModalProps> = ({
   update,
   close,
-  dropboxAccessToken,
 }): JSX.Element => {
   const [inputData, setInputData] = useState<InputData>({
     title: '',
@@ -48,10 +47,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
   const [uploadMethod, setUploadMethod] = useState<
     'file' | 'url' | 'dropbox' | undefined
   >(undefined);
-  const [dropboxFilePaths, setDropboxFilePaths] = useState<string[]>([]);
-  const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>(
-    undefined
-  );
+  const [dropboxFileLinks, setDropboxFileLinks] = useState<string[]>([]);
 
   // CONSTANTS
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -59,21 +55,12 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
   const { title, description, tags, metadata, collectionId, videoURL } =
     inputData;
 
-  useEffect(() => {
-    if (dropboxAccessToken) {
-      setUploadMethod('dropbox');
-      fetchDropboxFiles(dropboxAccessToken);
-    }
-  }, [dropboxAccessToken]);
-
   const displayVideoFrame = (
     video: HTMLVideoElement,
     source: HTMLSourceElement,
     file: File
   ) => {
-    // Object Url as the video source
     source.setAttribute('src', URL.createObjectURL(file));
-    // Load the video and show it
     video.load();
   };
 
@@ -115,9 +102,6 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
       inputData?.metadata && inputData?.metadata.filter((m) => m !== metadata);
     setInputData({ ...inputData, metadata: newMetadata });
   };
-  const handleRadioChange = (filePath: string) => {
-    setSelectedFilePath(filePath);
-  };
 
   const onFileSelected = (file: File) => {
     console.log(file, 'file');
@@ -132,27 +116,15 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
     if (videoRef.current && sourceRef.current)
       displayVideoFrame(videoRef.current, sourceRef.current, file);
   };
-  const connectToDropbox = () => {
-    const clientId = 'xzz26raqipbnvup';
-    const redirectUri =
-      'http://localhost:1337/admin/plugins/strapi-uploader-plugin';
-    const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}`;
-    window.location.href = authUrl;
-  };
 
-  const fetchDropboxFiles = async (accessToken) => {
-    var Dropbox = require('dropbox').Dropbox;
-    var dbx = new Dropbox({ accessToken });
-
-    const files = await dbx.filesListFolder({ path: '' });
-
-    const filePaths = files.result.entries
-      .filter((file) => file['.tag'] === 'file')
-      .map((video) => {
-        return video.path_lower;
-      });
-    setDropboxFilePaths(filePaths);
-  };
+  function handleDropboxFiles(files) {
+    setUploadMethod('dropbox');
+    setDropboxFileLinks(
+      files.map((file) => {
+        return file.link;
+      })
+    );
+  }
 
   const renderUploadMethod = () => {
     if (uploadMethod === 'file') {
@@ -178,39 +150,44 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         </Wrapper>
       );
     } else if (uploadMethod === 'dropbox') {
-      if (dropboxAccessToken) {
-        return (
-          <DropboxView
-            setUploadMethod={setUploadMethod}
-            handleRadioChange={handleRadioChange}
-            dropboxFilePaths={dropboxFilePaths}
-            selectedFilePath={selectedFilePath}
-          ></DropboxView>
-        );
-      } else {
-        connectToDropbox();
-        return (
-          <Wrapper>
-            <Typography>Connecting to Dropbox...</Typography>
-          </Wrapper>
-        );
-      }
+      return (
+        <Wrapper>
+          <Stack spacing={2}>
+            <Typography>{`${dropboxFileLinks.length} ${
+              dropboxFileLinks.length > 1 ? 'files' : 'file'
+            } selected`}</Typography>
+          </Stack>
+        </Wrapper>
+      );
     } else {
       return (
         <Wrapper>
           <Stack size={4}>
-            <Button variant="primary" onClick={() => setUploadMethod('file')}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setUploadMethod('file');
+              }}
+            >
               Upload via File
             </Button>
-            <Button variant="secondary" onClick={() => setUploadMethod('url')}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setUploadMethod('url');
+              }}
+            >
               Upload via URL
             </Button>
-            <Button
-              variant="tertiary"
-              onClick={() => setUploadMethod('dropbox')}
+
+            <DropboxChooser
+              appKey={DROPBOX_CLIENT_ID}
+              success={handleDropboxFiles}
+              cancel={() => console.log('closed')}
+              multiselect={true}
             >
-              Upload via Dropbox
-            </Button>
+              <Button variant="primary">Upload via Dropbox</Button>
+            </DropboxChooser>
           </Stack>
         </Wrapper>
       );
@@ -278,7 +255,6 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
           <>
             <UploadButton
               uploadMethod={uploadMethod}
-              dropboxAccessToken={dropboxAccessToken}
               currentFile={file}
               title={title}
               description={description}
@@ -286,7 +262,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
               metadata={metadata || []}
               collectionId={collectionId}
               videoURL={videoURL}
-              selectedFilePath={selectedFilePath}
+              dropboxFileLinks={dropboxFileLinks}
               update={update}
               close={close}
             />

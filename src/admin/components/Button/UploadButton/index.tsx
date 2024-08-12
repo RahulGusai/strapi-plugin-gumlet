@@ -7,7 +7,6 @@ import axios from 'axios';
 
 export interface IUploadButtonProps {
   uploadMethod: string | undefined;
-  dropboxAccessToken: string | undefined;
   currentFile: File | undefined;
   title: string;
   description: string;
@@ -15,14 +14,13 @@ export interface IUploadButtonProps {
   metadata: { key: string; value: string }[];
   collectionId: string;
   videoURL: string | undefined;
-  selectedFilePath: string;
+  dropboxFileLinks: string[];
   update: () => void;
   close: () => void;
 }
 
 const UploadButton: FC<IUploadButtonProps> = ({
   uploadMethod,
-  dropboxAccessToken,
   currentFile,
   title,
   description,
@@ -30,7 +28,7 @@ const UploadButton: FC<IUploadButtonProps> = ({
   metadata,
   collectionId,
   videoURL,
-  selectedFilePath,
+  dropboxFileLinks,
   update,
   close,
 }): JSX.Element => {
@@ -50,7 +48,7 @@ const UploadButton: FC<IUploadButtonProps> = ({
     uploadIsDisabled =
       uploadIsDisabled || videoURL === undefined || videoURL.length == 0;
   if (uploadMethod === 'dropbox')
-    uploadIsDisabled = uploadIsDisabled || selectedFilePath === undefined;
+    uploadIsDisabled = uploadIsDisabled || dropboxFileLinks.length == 0;
 
   const fileInputChange = async () => {
     const body = {
@@ -70,7 +68,7 @@ const UploadButton: FC<IUploadButtonProps> = ({
     }
 
     if (uploadMethod == 'dropbox') {
-      uploadViaDropbox(body, selectedFilePath);
+      uploadViaDropbox(body, dropboxFileLinks);
     }
   };
 
@@ -124,28 +122,21 @@ const UploadButton: FC<IUploadButtonProps> = ({
     close();
   };
 
-  const uploadViaDropbox = async (body, selectedFilePath: string) => {
-    // Fetch the video URL here via dropbox API.
-    const Dropbox = require('dropbox').Dropbox;
-    const dbx = new Dropbox({ accessToken: dropboxAccessToken });
+  const uploadViaDropbox = async (body, dropboxFileLinks: string[]) => {
+    for (const dropboxFileLink of dropboxFileLinks) {
+      const videoURL = dropboxFileLink.replace('dl=0', 'dl=1');
 
-    const response = await dbx.filesGetTemporaryLink({
-      path: selectedFilePath,
-    });
+      const { assetId, thumbnail, playbackUrl } =
+        await assetsRequests.createVideoAsset({ ...body, videoURL: videoURL });
 
-    const videoURL = response.result.link;
-
-    const { assetId, thumbnail, playbackUrl } =
-      await assetsRequests.createVideoAsset({ ...body, videoURL: videoURL });
-
-    const strapiAssetData = {
-      ...body,
-      videoId: assetId,
-      playbackUrl: playbackUrl,
-      thumbnail: thumbnail,
-    };
-    createStrapiAsset(strapiAssetData);
-
+      const strapiAssetData = {
+        ...body,
+        videoId: assetId,
+        playbackUrl: playbackUrl,
+        thumbnail: thumbnail,
+      };
+      createStrapiAsset(strapiAssetData);
+    }
     close();
   };
 

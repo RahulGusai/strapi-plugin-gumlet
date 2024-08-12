@@ -60,7 +60,6 @@ const HomePage = () => {
     const [assets, setAssets] = (0, react_1.useState)([]);
     const [search, setSearch] = (0, react_1.useState)('');
     const [isVisible, setIsVisible] = (0, react_1.useState)(false);
-    const [dropboxAccessToken, setDropboxAccessToken] = (0, react_1.useState)(undefined);
     const permissions = (0, react_1.useMemo)(() => {
         return {
             read: permissions_1.default.mainRead,
@@ -93,18 +92,6 @@ const HomePage = () => {
     (0, react_1.useEffect)(() => {
         getApiKey();
     }, []);
-    (0, react_1.useEffect)(() => {
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        const accessToken = params.get('access_token');
-        if (accessToken) {
-            setDropboxAccessToken(accessToken);
-            setIsVisible(true);
-        }
-        else {
-            console.log('No access token found in the URL.');
-        }
-    }, []);
     const handleSearch = (value) => {
         setSearch(value);
     };
@@ -112,7 +99,7 @@ const HomePage = () => {
         return react_1.default.createElement(helper_plugin_1.LoadingIndicatorPage, null);
     return (react_1.default.createElement(Layout_1.Layout, null,
         react_1.default.createElement(Layout_1.BaseHeaderLayout, { title: "Gumlet video uploader", subtitle: "Upload to and manage your Gumlet library directly within Strapi", as: "h2", primaryAction: isConfigurated &&
-                canCreate && (react_1.default.createElement(AddButton_1.default, { isVisible: isVisible, setIsVisible: setIsVisible, update: fetchData, dropboxAccessToken: dropboxAccessToken })) }),
+                canCreate && (react_1.default.createElement(AddButton_1.default, { isVisible: isVisible, setIsVisible: setIsVisible, update: fetchData })) }),
         isConfigurated ? (!isLoadingData && (assets === null || assets === void 0 ? void 0 : assets.length) > 0 ? (react_1.default.createElement(Layout_1.ContentLayout, null,
             react_1.default.createElement(SearchBar_1.default, { search: search, handleSearch: (query) => handleSearch(query), clearSearch: () => setSearch('') }),
             react_1.default.createElement(styles_1.GridBroadcast, null, assets

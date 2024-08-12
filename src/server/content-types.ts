@@ -1,4 +1,4 @@
-export = {
+export default {
   'api-video-asset': {
     schema: {
       kind: 'collectionType',

@@ -17,18 +17,13 @@ const AddButton: FC<IAddButtonProps> = ({
   update,
   dropboxAccessToken,
 }) => {
-  //   const [isVisible, setIsVisible] = useState(false);
   return (
     <>
       <Button endIcon={<Plus />} onClick={() => setIsVisible(true)}>
         Add a video
       </Button>
       {isVisible && (
-        <AddVideoModal
-          update={update}
-          close={() => setIsVisible(false)}
-          dropboxAccessToken={dropboxAccessToken}
-        />
+        <AddVideoModal update={update} close={() => setIsVisible(false)} />
       )}
     </>
   );
