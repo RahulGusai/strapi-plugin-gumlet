@@ -1,11 +1,11 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, FC, ChangeEvent } from 'react';
 import { Select, Option } from '@strapi/design-system';
 import { useCMEditViewDataManager } from '@strapi/helper-plugin';
 import assetsRequests from '../../api/assets';
 import styled from 'styled-components';
 import { Flex } from '@strapi/design-system/Flex';
 import { Field } from '@strapi/design-system/Field';
-import VideoAssets from '@api.video/nodejs-client/lib/model/VideoAssets';
+import { FieldInput, FieldLabel } from '@strapi/design-system/Field';
 
 interface GumletVideoFieldProps {
   name: string;
@@ -20,7 +20,9 @@ const GumletVideoField: FC<GumletVideoFieldProps> = ({
 }): JSX.Element => {
   const { modifiedData, onChange } = useCMEditViewDataManager();
   const [videoAssets, setVideoAssets] = useState([]);
+  const [filteredAssets, setFilteredAssets] = useState([]);
   const [assetId, setAssetId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (modifiedData[name]) {
@@ -32,6 +34,7 @@ const GumletVideoField: FC<GumletVideoFieldProps> = ({
     const fetchGumletAssets = async () => {
       const gumletAssets = await assetsRequests.getAllvideos();
       setVideoAssets(gumletAssets);
+      setFilteredAssets(gumletAssets);
 
       if (assetId && !gumletAssets.some((asset) => asset.videoId === assetId)) {
         setAssetId('');
@@ -40,6 +43,14 @@ const GumletVideoField: FC<GumletVideoFieldProps> = ({
 
     fetchGumletAssets();
   }, [assetId]);
+
+  useEffect(() => {
+    setFilteredAssets(
+      videoAssets.filter((asset) =>
+        asset.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, videoAssets]);
 
   const handleChange = (value) => {
     onChange({
@@ -53,18 +64,29 @@ const GumletVideoField: FC<GumletVideoFieldProps> = ({
 
   return (
     <Field name={name} id={name} error={error}>
-      <Select
-        label="Select Gumlet Video"
-        name="gumletVideo"
-        value={assetId || ''}
-        onChange={(value: string) => handleChange({ assetId: value })}
-      >
-        {videoAssets.map((asset) => (
-          <Option key={asset.videoId} value={asset.videoId}>
-            {asset.title}
-          </Option>
-        ))}
-      </Select>
+      <Flex direction="column" alignItems="stretch" gap={2}>
+        <FieldLabel>Filter For Gumlet Video</FieldLabel>
+        <FieldInput
+          type="text"
+          placeholder="Search video..."
+          value={searchTerm}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setSearchTerm(e.target.value)
+          }
+        />
+        <Select
+          label="Select Gumlet Video"
+          name="gumletVideo"
+          value={assetId || ''}
+          onChange={(value: string) => handleChange({ assetId: value })}
+        >
+          {filteredAssets.map((asset) => (
+            <Option key={asset.videoId} value={asset.videoId}>
+              {asset.title}
+            </Option>
+          ))}
+        </Select>
+      </Flex>
       {assetId && assetId.length > 0 && (
         <Flex paddingTop={4} justifyContent={'center'}>
           <iframe

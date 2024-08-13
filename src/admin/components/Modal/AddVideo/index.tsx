@@ -48,6 +48,7 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
     'file' | 'url' | 'dropbox' | undefined
   >(undefined);
   const [dropboxFileLinks, setDropboxFileLinks] = useState<string[]>([]);
+  const [dropboxFileNames, setDropboxFileNames] = useState<string[]>([]);
 
   // CONSTANTS
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -124,6 +125,11 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
         return file.link;
       })
     );
+    setDropboxFileNames(
+      files.map((file) => {
+        return file.name;
+      })
+    );
   }
 
   const renderUploadMethod = () => {
@@ -156,6 +162,15 @@ const AddVideoModal: FC<IAddVideoModalProps> = ({
             <Typography>{`${dropboxFileLinks.length} ${
               dropboxFileLinks.length > 1 ? 'files' : 'file'
             } selected`}</Typography>
+            <ul>
+              {dropboxFileNames.map((fileName, index) => (
+                <li key={index}>
+                  <Typography variant="omega">{`${
+                    index + 1
+                  }. ${fileName}`}</Typography>
+                </li>
+              ))}
+            </ul>
           </Stack>
         </Wrapper>
       );
