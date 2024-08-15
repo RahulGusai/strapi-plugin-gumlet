@@ -18,7 +18,7 @@ const getConfig = () => __awaiter(void 0, void 0, void 0, function* () {
     const pluginStore = strapi.store({
         environment: strapi.config.environment,
         type: 'plugin',
-        name: 'strapi-uploader-plugin',
+        name: 'strapi-plugin-gumlet',
     });
     const defaultPublic = yield pluginStore.get({
         key: 'defaultPublic',

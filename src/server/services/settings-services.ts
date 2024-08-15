@@ -8,7 +8,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const pluginStore = strapi.store({
       environment: strapi.config.environment,
       type: 'plugin',
-      name: 'strapi-uploader-plugin',
+      name: 'strapi-plugin-gumlet',
     });
 
     const defaultPublic = await pluginStore.get({
@@ -45,7 +45,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const pluginStore = strapi.store({
       environment: strapi.config.environment,
       type: 'plugin',
-      name: 'strapi-uploader-plugin',
+      name: 'strapi-plugin-gumlet',
     });
 
     try {

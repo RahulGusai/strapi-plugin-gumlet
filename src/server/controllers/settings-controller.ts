@@ -25,7 +25,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log('controller.getSettings');
 
       return await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('settings')
         .getSettings(ctx);
     } catch (err) {
@@ -41,7 +41,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log('controller.saveSettings');
 
       return await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('settings')
         .saveSettings(ctx.request.body);
     } catch (err) {

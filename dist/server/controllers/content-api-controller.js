@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const strapi_1 = require("@strapi/strapi");
 const pluginId_1 = __importDefault(require("../../admin/pluginId"));
 const model = `plugin::${pluginId_1.default}.api-video-asset`;
-exports.default = strapi_1.factories.createCoreController('plugin::strapi-uploader-plugin.api-video-asset', ({ strapi }) => ({
+exports.default = strapi_1.factories.createCoreController('plugin::strapi-plugin-gumlet.api-video-asset', ({ strapi }) => ({
     count(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
             // @ts-ignore

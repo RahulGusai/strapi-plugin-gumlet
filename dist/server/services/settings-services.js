@@ -20,7 +20,7 @@ exports.default = ({ strapi }) => ({
             const pluginStore = strapi.store({
                 environment: strapi.config.environment,
                 type: 'plugin',
-                name: 'strapi-uploader-plugin',
+                name: 'strapi-plugin-gumlet',
             });
             const defaultPublic = yield pluginStore.get({
                 key: 'defaultPublic',
@@ -52,7 +52,7 @@ exports.default = ({ strapi }) => ({
             const pluginStore = strapi.store({
                 environment: strapi.config.environment,
                 type: 'plugin',
-                name: 'strapi-uploader-plugin',
+                name: 'strapi-plugin-gumlet',
             });
             try {
                 const isValid = yield (0, config_1.isGumletApiKeyValid)(settings.apiKey);

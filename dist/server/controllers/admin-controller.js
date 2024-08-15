@@ -20,7 +20,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 return yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .createVideoAsset(ctx.request.body);
             }
@@ -37,7 +37,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 return yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .createVideoId(ctx.request.body);
             }
@@ -54,7 +54,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .create(ctx.request.body);
             }
@@ -70,7 +70,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .findAll(ctx.request.body);
             }
@@ -86,7 +86,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .getVideoDetail(ctx.params.videoId);
             }
@@ -102,7 +102,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 ctx.body = yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .update(ctx.params.id, ctx.params.videoId, ctx.request.body);
             }
@@ -118,7 +118,7 @@ exports.default = ({ strapi }) => ({
                     return ctx.forbidden();
                 }
                 return yield strapi
-                    .plugin('strapi-uploader-plugin')
+                    .plugin('strapi-plugin-gumlet')
                     .service('api-video-asset')
                     .delete(ctx.params.id, ctx.params.videoId);
             }

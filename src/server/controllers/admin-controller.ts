@@ -16,7 +16,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       return await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .createVideoAsset(ctx.request.body);
     } catch (err) {
@@ -32,7 +32,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       return await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .createVideoId(ctx.request.body);
     } catch (err) {
@@ -49,7 +49,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       ctx.body = await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .create(ctx.request.body);
     } catch (err) {
@@ -63,7 +63,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       ctx.body = await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .findAll(ctx.request.body);
     } catch (err) {
@@ -78,7 +78,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       ctx.body = await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .getVideoDetail(ctx.params.videoId);
     } catch (err) {
@@ -93,7 +93,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       ctx.body = await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .update(ctx.params.id, ctx.params.videoId, ctx.request.body);
     } catch (err) {
@@ -107,7 +107,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       return await strapi
-        .plugin('strapi-uploader-plugin')
+        .plugin('strapi-plugin-gumlet')
         .service('api-video-asset')
         .delete(ctx.params.id, ctx.params.videoId);
     } catch (err) {

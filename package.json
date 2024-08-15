@@ -1,9 +1,9 @@
 {
-  "name": "strapi-uploader-plugin",
+  "name": "strapi-plugin-gumlet",
   "version": "0.0.0",
   "description": "This is the description of the plugin.",
   "strapi": {
-    "name": "strapi-uploader-plugin",
+    "name": "strapi-plugin-gumlet",
     "description": "A powerful Strapi plugin to easily manage your videos and integrate them in your project",
     "kind": "plugin",
     "displayName": "Gumlet Video Uploader"

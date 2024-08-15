@@ -48,7 +48,7 @@ exports.default = {
     register(app) {
         app.customFields.register({
             name: 'gumlet-video',
-            pluginId: 'strapi-uploader-plugin',
+            pluginId: 'strapi-plugin-gumlet',
             type: 'json',
             icon: GumletVideoIcon_1.default,
             intlLabel: {
@@ -85,7 +85,7 @@ exports.default = {
                     id: 'Settings Section Gumlet Video Uploader',
                     defaultMessage: 'Settings',
                 },
-                id: 'strapi-uploader-plugin-settings',
+                id: 'strapi-plugin-gumlet-settings',
                 to: `/settings/${pluginId_1.default}`,
                 permissions: permissions_1.default.settingsRoles,
                 Component: () => __awaiter(this, void 0, void 0, function* () { return yield Promise.resolve().then(() => __importStar(require('./pages/Settings'))); }),

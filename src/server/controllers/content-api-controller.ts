@@ -5,7 +5,7 @@ import { CustomVideo } from '../../types';
 const model = `plugin::${pluginId}.api-video-asset`;
 
 export default factories.createCoreController(
-  'plugin::strapi-uploader-plugin.api-video-asset',
+  'plugin::strapi-plugin-gumlet.api-video-asset',
   ({ strapi }) => ({
     async count(ctx) {
       // @ts-ignore

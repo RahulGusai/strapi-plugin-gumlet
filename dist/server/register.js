@@ -4,7 +4,7 @@
 //   register({ strapi }) {
 //     strapi.customFields.register({
 //       name: 'gumlet-video',
-//       plugin: 'strapi-uploader-plugin',
+//       plugin: 'strapi-plugin-gumlet',
 //       type: 'string',
 //     });
 //   },
